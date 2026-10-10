@@ -139,10 +139,10 @@ export default function ProcessSection() {
           </p>
         </div>
 
-        {/* Seamless Unified Interactive Pipeline: Left Cards flowing directly into Right SVG Telemetry Hub */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          {/* LEFT: 4 Connected Milestone Cards (6 cols) */}
-          <div className="lg:col-span-6 space-y-4">
+        {/* Seamless Unified Interactive Pipeline: Left Cards flowing directly into Right SVG Telemetry Hub (Side-by-Side on Mobile & Desktop) */}
+        <div className="grid grid-cols-12 gap-2 xs:gap-3 sm:gap-6 lg:gap-8 items-center">
+          {/* LEFT: 4 Connected Milestone Cards (7 cols on mobile, 6 cols on tablet/desktop) */}
+          <div className="col-span-7 sm:col-span-6 space-y-1.5 xs:space-y-2 sm:space-y-4">
             {steps.map((step, idx) => {
               const isActive = activeStep === idx;
 
@@ -151,16 +151,16 @@ export default function ProcessSection() {
                   key={step.num}
                   onClick={() => setActiveStep(idx)}
                   onMouseEnter={() => setActiveStep(idx)}
-                  className={`group relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-300 cursor-pointer ${
+                  className={`group relative p-2 xs:p-2.5 sm:p-5 lg:p-6 rounded-xl sm:rounded-2xl lg:rounded-3xl transition-all duration-300 cursor-pointer ${
                     isActive
-                      ? 'bg-amber-50/60 dark:bg-[#0d1a38] border-2 border-[#ea580c] shadow-lg shadow-orange-500/10 scale-[1.01]'
-                      : 'bg-slate-50/80 dark:bg-[#081126] border border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
+                      ? 'bg-amber-50/60 dark:bg-[#0d1a38] border-2 border-[#ea580c] shadow-md shadow-orange-500/10 scale-[1.01]'
+                      : 'bg-slate-50/80 dark:bg-[#081126] border border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-2xs'
                   }`}
                 >
-                  <div className="flex items-start sm:items-center gap-4 sm:gap-6">
+                  <div className="flex items-start sm:items-center gap-1.5 xs:gap-2.5 sm:gap-5">
                     {/* Step Number */}
                     <span
-                      className={`text-2xl sm:text-4xl font-extrabold tracking-tight font-mono transition-colors duration-200 ${
+                      className={`text-base xs:text-lg sm:text-3xl lg:text-4xl font-extrabold tracking-tight font-mono transition-colors duration-200 shrink-0 ${
                         isActive
                           ? 'text-[#ea580c] dark:text-[#ea580c]'
                           : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-400'
@@ -173,7 +173,7 @@ export default function ProcessSection() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <h3
-                          className={`text-base sm:text-lg font-bold transition-colors ${
+                          className={`text-[11px] xs:text-xs sm:text-base lg:text-lg font-bold transition-colors leading-tight line-clamp-2 ${
                             isActive
                               ? 'text-slate-900 dark:text-white font-extrabold'
                               : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white'
@@ -182,21 +182,33 @@ export default function ProcessSection() {
                           {step.title}
                         </h3>
 
-                        {/* Live Step Badge */}
+                        {/* Live Step Badge (Desktop) */}
                         {isActive && (
-                          <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-100/80 dark:bg-orange-950/80 px-2.5 py-0.5 rounded-full border border-orange-300 dark:border-orange-800">
+                          <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-bold text-orange-600 dark:text-orange-400 bg-orange-100/80 dark:bg-orange-950/80 px-2.5 py-0.5 rounded-full border border-orange-300 dark:border-orange-800 shrink-0 ml-1">
                             <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping" />
                             Active Flow
                           </span>
                         )}
                       </div>
 
-                      {/* Pill Tags */}
-                      <div className="mt-3 flex flex-wrap gap-1.5">
-                        {step.pills.map((pill, pIdx) => (
+                      {/* Pill Tags: 2 compact pills on mobile, all pills on tablet/desktop */}
+                      <div className="mt-1 xs:mt-1.5 sm:mt-3 flex flex-wrap gap-1 sm:gap-1.5">
+                        {step.pills.slice(0, 2).map((pill, pIdx) => (
                           <span
                             key={pIdx}
-                            className={`px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
+                            className={`px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-full text-[8.5px] xs:text-[9.5px] sm:text-xs font-semibold leading-none transition-all ${
+                              isActive
+                                ? 'bg-orange-100/90 dark:bg-orange-950/60 text-[#ea580c] dark:text-orange-300 border border-orange-300 dark:border-orange-500/40'
+                                : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200/70 dark:border-slate-800'
+                            }`}
+                          >
+                            {pill}
+                          </span>
+                        ))}
+                        {step.pills.slice(2).map((pill, pIdx) => (
+                          <span
+                            key={pIdx + 2}
+                            className={`hidden sm:inline-flex px-2.5 py-1 rounded-full text-xs font-semibold transition-all ${
                               isActive
                                 ? 'bg-orange-100/90 dark:bg-orange-950/60 text-[#ea580c] dark:text-orange-300 border border-orange-300 dark:border-orange-500/40'
                                 : 'bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200/70 dark:border-slate-800'
@@ -213,10 +225,115 @@ export default function ProcessSection() {
             })}
           </div>
 
-          {/* RIGHT: High-Tech Telemetry Flow Canvas & Production Launch Engine (6 cols) */}
-          <div className="lg:col-span-6 relative w-full h-[280px] xs:h-[340px] sm:h-[440px] lg:h-[500px] flex items-center justify-center select-none">
+          {/* RIGHT: High-Tech Telemetry Flow Canvas & Production Launch Engine (5 cols on mobile, 6 cols on tablet/desktop) */}
+          <div className="col-span-5 sm:col-span-6 relative w-full h-[280px] xs:h-[310px] sm:h-[440px] lg:h-[500px] flex items-center justify-center select-none">
+            {/* MOBILE TELEMETRY CANVAS (viewBox 0 0 250 500 - Perfectly aligned face-to-face with cards) */}
             <svg
-              className="w-full h-full overflow-visible"
+              className="block sm:hidden w-full h-full overflow-visible"
+              viewBox="0 0 250 500"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <filter id="telemetry-glow-mobile" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Base Static Guide Tracks */}
+              <path d="M 0 65 C 65 70, 130 180, 190 250" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeWidth="1.5" fill="none" />
+              <path d="M 0 185 C 65 190, 130 220, 190 250" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeWidth="1.5" fill="none" />
+              <path d="M 0 305 C 65 300, 130 270, 190 250" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeWidth="1.5" fill="none" />
+              <path d="M 0 425 C 65 410, 130 310, 190 250" stroke="currentColor" className="text-slate-200 dark:text-slate-800" strokeWidth="1.5" fill="none" />
+
+              {/* CONTINUOUS FLOWING ANIMATED DASHED LINES */}
+              <path
+                d="M 0 65 C 65 70, 130 180, 190 250"
+                stroke={activeStep === 0 ? '#ea580c' : '#f97316'}
+                strokeWidth={activeStep === 0 ? '3.5' : '1.8'}
+                strokeOpacity={activeStep === 0 ? '1' : '0.45'}
+                className={activeStep === 0 ? 'flowing-line-active' : 'flowing-line-slow'}
+                fill="none"
+                filter={activeStep === 0 ? 'url(#telemetry-glow-mobile)' : undefined}
+              />
+              <path
+                d="M 0 185 C 65 190, 130 220, 190 250"
+                stroke={activeStep === 1 ? '#ea580c' : '#f97316'}
+                strokeWidth={activeStep === 1 ? '3.5' : '1.8'}
+                strokeOpacity={activeStep === 1 ? '1' : '0.45'}
+                className={activeStep === 1 ? 'flowing-line-active' : 'flowing-line-medium'}
+                fill="none"
+                filter={activeStep === 1 ? 'url(#telemetry-glow-mobile)' : undefined}
+              />
+              <path
+                d="M 0 305 C 65 300, 130 270, 190 250"
+                stroke={activeStep === 2 ? '#ea580c' : '#f97316'}
+                strokeWidth={activeStep === 2 ? '3.5' : '1.8'}
+                strokeOpacity={activeStep === 2 ? '1' : '0.45'}
+                className={activeStep === 2 ? 'flowing-line-active' : 'flowing-line-fast'}
+                fill="none"
+                filter={activeStep === 2 ? 'url(#telemetry-glow-mobile)' : undefined}
+              />
+              <path
+                d="M 0 425 C 65 410, 130 310, 190 250"
+                stroke={activeStep === 3 ? '#ea580c' : '#f97316'}
+                strokeWidth={activeStep === 3 ? '3.5' : '1.8'}
+                strokeOpacity={activeStep === 3 ? '1' : '0.45'}
+                className={activeStep === 3 ? 'flowing-line-active' : 'flowing-line-medium'}
+                fill="none"
+                filter={activeStep === 3 ? 'url(#telemetry-glow-mobile)' : undefined}
+              />
+
+              {/* Dynamic Traveling Comet Heads */}
+              <circle r="3.5" fill="#ffffff" stroke="#ea580c" strokeWidth="2" filter="url(#telemetry-glow-mobile)">
+                <animateMotion
+                  path={
+                    activeStep === 0
+                      ? 'M 0 65 C 65 70, 130 180, 190 250'
+                      : activeStep === 1
+                      ? 'M 0 185 C 65 190, 130 220, 190 250'
+                      : activeStep === 2
+                      ? 'M 0 305 C 65 300, 130 270, 190 250'
+                      : 'M 0 425 C 65 410, 130 310, 190 250'
+                  }
+                  dur="1.7s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+              <circle r="2.5" fill="#fb923c" opacity="0.8">
+                <animateMotion
+                  path="M 0 305 C 65 300, 130 270, 190 250"
+                  dur="2.8s"
+                  repeatCount="indefinite"
+                />
+              </circle>
+
+              {/* Central Mobile Launch Engine Hub */}
+              <g transform="translate(190, 250)">
+                <circle r="44" stroke="#ea580c" strokeOpacity="0.15" strokeWidth="1.2" strokeDasharray="4 4" />
+                <circle r="30" stroke="#ea580c" strokeOpacity="0.3" strokeWidth="1.2" strokeDasharray="3 3" className="animate-spin" style={{ animationDuration: '24s' }} />
+                <circle r="20" fill="#ea580c" fillOpacity="0.1" className="animate-ping" style={{ animationDuration: '3s' }} />
+                <circle r="14" fill="#ea580c" fillOpacity="0.2" />
+                <circle r="9" fill="#ea580c" filter="url(#telemetry-glow-mobile)" />
+                <circle r="3.5" fill="#ffffff" />
+                <g className="animate-spin" style={{ animationDuration: '10s' }}>
+                  <circle cx="30" cy="0" r="2.5" fill="#ea580c" />
+                  <circle cx="-30" cy="0" r="2" fill="#f59e0b" />
+                </g>
+              </g>
+
+              {/* Forward Cloud Line */}
+              <line x1="190" y1="250" x2="242" y2="250" stroke="#ea580c" strokeWidth="2" strokeDasharray="5 4" className="flowing-line-fast" />
+              <circle cx="242" cy="250" r="3.5" fill="#10b981" />
+            </svg>
+
+            {/* DESKTOP TELEMETRY CANVAS (viewBox 0 0 540 500) */}
+            <svg
+              className="hidden sm:block w-full h-full overflow-visible"
               viewBox="0 0 540 500"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -332,7 +449,7 @@ export default function ProcessSection() {
                 />
               </circle>
 
-              {/* CENTRAL PRODUCTION DEPLOYMENT & SCALING ENGINE (Replacing human silhouette with futuristic launch hub) */}
+              {/* CENTRAL PRODUCTION DEPLOYMENT & SCALING ENGINE */}
               <g transform="translate(430, 250)">
                 {/* Outer concentric telemetry radar rings */}
                 <circle r="60" stroke="#ea580c" strokeOpacity="0.12" strokeWidth="1.5" strokeDasharray="6 6" />
