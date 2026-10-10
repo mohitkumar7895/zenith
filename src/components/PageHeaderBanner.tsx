@@ -32,7 +32,7 @@ export default function PageHeaderBanner({
 
       {/* Content: ONLY Page Title, bold & clean */}
       <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6">
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-xl">
+        <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight drop-shadow-xl">
           {title}
         </h1>
       </div>

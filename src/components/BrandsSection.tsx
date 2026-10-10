@@ -227,18 +227,18 @@ export default function BrandsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header exactly as requested */}
         <div className="text-center max-w-3xl mx-auto mb-6 sm:mb-8">
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight flex items-center justify-center min-h-[48px] sm:min-h-[60px]">
+          <h2 className="text-2xl xs:text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight flex items-center justify-center min-h-[44px] sm:min-h-[60px]">
             <span>{typedTitle || (hasScrolledIntoView ? '' : fullTitle)}</span>
-            <span className="inline-block w-1 h-7 sm:h-11 bg-orange-500 ml-1.5 animate-pulse" />
+            <span className="inline-block w-1 h-6 sm:h-11 bg-orange-500 ml-1.5 animate-pulse" />
           </h2>
 
-          <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base leading-relaxed font-medium max-w-2xl mx-auto">
+          <p className="mt-3 text-slate-600 dark:text-slate-400 text-xs sm:text-base leading-relaxed font-medium max-w-2xl mx-auto">
             We build and manage powerful digital brands across Healthcare, Technology, Distribution, Agriculture and Business Solutions.
           </p>
         </div>
 
         {/* 3-Column Clean Card Layout matching the screenshot (strictly 3 featured brands) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {brands.slice(0, 3).map((brand, idx) => {
             const description =
               brand.description ||
@@ -257,7 +257,7 @@ export default function BrandsSection() {
             return (
               <div
                 key={brand.id || idx}
-                className="group p-8 sm:p-9 rounded-3xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center text-center justify-between"
+                className="group p-5 xs:p-7 sm:p-9 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center text-center justify-between"
               >
                 <div className="w-full flex flex-col items-center">
                   {/* Brand Logo / Mark */}

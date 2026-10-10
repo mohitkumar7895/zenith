@@ -85,7 +85,7 @@ export default function PortfolioPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                className={`px-2.5 xs:px-3.5 py-1.5 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer ${
                   selectedCategory === cat
                     ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-md shadow-orange-500/20'
                     : 'bg-white dark:bg-[#070e22] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'

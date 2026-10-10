@@ -176,13 +176,13 @@ export default function TechStackSection() {
                     setActiveCategory(cat.name);
                     setSearchQuery('');
                   }}
-                  className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                  className={`px-2.5 xs:px-3 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 xs:gap-2 ${
                     isSelected
                       ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-md shadow-orange-500/25 scale-[1.02]'
                       : 'bg-white dark:bg-[#0b152d] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800/80 shadow-2xs'
                   }`}
                 >
-                  <IconComp className={`w-3.5 h-3.5 ${isSelected ? 'text-white' : 'text-amber-500'}`} />
+                  <IconComp className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-white' : 'text-amber-500'}`} />
                   <span>{cat.label}</span>
                 </button>
               );
@@ -203,11 +203,11 @@ export default function TechStackSection() {
         </div>
 
         {/* Compact Tech Grid: Small boxes with blue point right in front of name */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-2 xs:gap-2.5">
           {filteredItems.map((tech, idx) => (
             <div
               key={idx}
-              className="px-3.5 py-2.5 rounded-xl bg-white dark:bg-[#091226] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/60 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-2 group cursor-default"
+              className="px-2.5 xs:px-3.5 py-2 xs:py-2.5 rounded-xl bg-white dark:bg-[#091226] border border-slate-200/90 dark:border-slate-800 hover:border-blue-500/60 shadow-2xs hover:shadow-xs transition-all flex items-center justify-between gap-1.5 xs:gap-2 group cursor-default"
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0 group-hover:scale-125 transition-transform shadow-sm shadow-blue-500/50" />

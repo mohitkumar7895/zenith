@@ -211,7 +211,7 @@ export default function Navbar() {
 
       {/* Mobile dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white/95 dark:bg-[#060d1f]/95 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-2">
+        <div className="lg:hidden bg-white/95 dark:bg-[#060d1f]/95 border-b border-slate-200 dark:border-slate-800 px-4 pt-2 pb-6 space-y-2 max-h-[calc(100vh-5rem)] overflow-y-auto">
           <Link
             href="/"
             onClick={() => setMobileMenuOpen(false)}

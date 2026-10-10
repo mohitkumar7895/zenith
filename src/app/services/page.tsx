@@ -85,7 +85,7 @@ export default function ServicesPage() {
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+              className={`px-3 xs:px-4 py-1.5 xs:py-2 rounded-xl text-[11px] xs:text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 selectedCategory === cat
                   ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-md shadow-orange-500/20'
                   : 'bg-white dark:bg-[#0b152d] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-orange-500/50'

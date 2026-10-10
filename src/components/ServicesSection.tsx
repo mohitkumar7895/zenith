@@ -126,18 +126,18 @@ export default function ServicesSection() {
             <span>Complete Digital Solutions</span>
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight flex items-center justify-center min-h-[48px] sm:min-h-[60px]">
+          <h2 className="text-2xl xs:text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight flex items-center justify-center min-h-[44px] sm:min-h-[60px]">
             <span>{typedTitle || (hasScrolledIntoView ? '' : fullTitle)}</span>
-            <span className="inline-block w-1 h-7 sm:h-10 bg-orange-500 ml-1.5 animate-pulse" />
+            <span className="inline-block w-1 h-6 sm:h-10 bg-orange-500 ml-1.5 animate-pulse" />
           </h2>
 
-          <p className="mt-3 text-slate-600 dark:text-slate-400 text-sm sm:text-base max-w-2xl mx-auto font-medium">
+          <p className="mt-3 text-slate-600 dark:text-slate-400 text-xs sm:text-base max-w-2xl mx-auto font-medium">
             From custom websites and Android apps to branding, paid ads and cloud hosting, we build solutions that convert.
           </p>
         </div>
 
         {/* Services Grid with Images and Minimal Clean Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {displayedServices.map((service, idx) => {
             const imageSrc = SERVICE_IMAGES[service.id] || '/services/web-dev.jpg';
 
@@ -148,7 +148,7 @@ export default function ServicesSection() {
               >
                 <div>
                   {/* Service Image Banner with Badge */}
-                  <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-slate-950">
+                  <div className="relative w-full h-44 xs:h-48 sm:h-52 overflow-hidden bg-slate-950">
                     <Image
                       src={imageSrc}
                       alt={service.title}
@@ -165,7 +165,7 @@ export default function ServicesSection() {
                   </div>
 
                   {/* Clean, Concise Card Content */}
-                  <div className="p-6">
+                  <div className="p-4 xs:p-6">
                     <div className="flex items-center gap-2.5 mb-1.5">
                       <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-slate-900 border border-amber-200/80 dark:border-slate-800 flex items-center justify-center shrink-0">
                         {getServiceIcon(service.id)}
@@ -195,7 +195,7 @@ export default function ServicesSection() {
                 </div>
 
                 {/* Bottom Action Button */}
-                <div className="p-6 pt-0">
+                <div className="p-4 xs:p-6 pt-0">
                   <button
                     onClick={() => openConsultationModal(service.title)}
                     className="w-full py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-200 group-hover:text-white bg-slate-100 dark:bg-slate-900 group-hover:bg-gradient-to-r group-hover:from-amber-500 group-hover:to-orange-500 border border-slate-200 dark:border-slate-800 group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-sm group-hover:shadow-md group-hover:shadow-orange-500/20"

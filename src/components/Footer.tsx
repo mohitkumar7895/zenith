@@ -12,18 +12,18 @@ export default function Footer() {
 
   return (
     <footer className="bg-slate-950 dark:bg-[#040814] text-slate-400 text-sm transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10">
           {/* Brand Logo */}
-          <div className="lg:col-span-2 space-y-4">
+          <div className="sm:col-span-2 lg:col-span-2 space-y-4">
             <Link href="/" className="inline-block group">
-              <div className="bg-white rounded-xl px-3.5 py-2 shadow-md shadow-orange-500/10 inline-flex items-center transition-transform group-hover:scale-[1.02]">
+              <div className="bg-white rounded-xl px-3 xs:px-3.5 py-1.5 xs:py-2 shadow-md shadow-orange-500/10 inline-flex items-center transition-transform group-hover:scale-[1.02]">
                 <Image
                   src="/logo.png"
                   alt="Zenith Web Works"
                   width={2172}
                   height={724}
-                  className="h-10 sm:h-12 w-auto max-w-[210px] object-contain"
+                  className="h-9 sm:h-12 w-auto max-w-[170px] xs:max-w-[210px] object-contain"
                 />
               </div>
             </Link>
