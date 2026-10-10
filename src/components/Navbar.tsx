@@ -48,13 +48,13 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Brand Logo */}
           <Link href="/" className="flex items-center group shrink-0 py-2">
-            <div className="relative bg-white px-3 py-1.5 rounded-xl shadow-sm border border-slate-200/80 dark:border-white/10 flex items-center transition-transform group-hover:scale-[1.02]">
+            <div className="relative bg-white px-2.5 xs:px-3 py-1.5 rounded-xl shadow-sm border border-slate-200/80 dark:border-white/10 flex items-center transition-transform group-hover:scale-[1.02]">
               <Image
                 src="/logo.png"
                 alt="Zenith Web Works"
                 width={2172}
                 height={724}
-                className="h-10 sm:h-12 w-auto max-w-[190px] sm:max-w-[240px] object-contain"
+                className="h-8 xs:h-10 sm:h-12 w-auto max-w-[150px] xs:max-w-[190px] sm:max-w-[240px] object-contain"
                 priority
               />
             </div>

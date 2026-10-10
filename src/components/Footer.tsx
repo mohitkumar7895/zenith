@@ -90,9 +90,9 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <div className="mt-8 pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 text-center sm:text-left">
           <p>© 2026 Zenith Web Works. All rights reserved. • We Build Ideas For A Better Web</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <Link href="/privacy" className="hover:text-amber-400 transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-amber-400 transition-colors">Terms & Conditions</Link>
             <Link href="/contact" className="hover:text-amber-400 transition-colors">Direct Support</Link>

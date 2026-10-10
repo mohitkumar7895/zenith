@@ -151,7 +151,7 @@ export default function ProcessSection() {
                   key={step.num}
                   onClick={() => setActiveStep(idx)}
                   onMouseEnter={() => setActiveStep(idx)}
-                  className={`group relative p-6 rounded-2xl sm:rounded-3xl transition-all duration-300 cursor-pointer ${
+                  className={`group relative p-4 sm:p-6 rounded-2xl sm:rounded-3xl transition-all duration-300 cursor-pointer ${
                     isActive
                       ? 'bg-amber-50/60 dark:bg-[#0d1a38] border-2 border-[#ea580c] shadow-lg shadow-orange-500/10 scale-[1.01]'
                       : 'bg-slate-50/80 dark:bg-[#081126] border border-slate-200/80 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs'
@@ -214,7 +214,7 @@ export default function ProcessSection() {
           </div>
 
           {/* RIGHT: High-Tech Telemetry Flow Canvas & Production Launch Engine (6 cols) */}
-          <div className="lg:col-span-6 relative w-full h-[440px] sm:h-[500px] flex items-center justify-center select-none">
+          <div className="lg:col-span-6 relative w-full h-[280px] xs:h-[340px] sm:h-[440px] lg:h-[500px] flex items-center justify-center select-none">
             <svg
               className="w-full h-full overflow-visible"
               viewBox="0 0 540 500"
