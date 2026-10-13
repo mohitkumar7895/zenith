@@ -190,6 +190,11 @@ export async function initializeDatabase(): Promise<boolean> {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    // Ensure imageUrl column exists if table was created in an earlier migration
+    try {
+      await db.query(`ALTER TABLE case_studies ADD COLUMN imageUrl VARCHAR(255) DEFAULT NULL;`);
+    } catch {}
+
     // Table: Blogs / Insights
     await db.query(`
       CREATE TABLE IF NOT EXISTS blogs (
