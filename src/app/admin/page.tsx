@@ -88,16 +88,32 @@ interface AdminUser {
 export default function AdminPage() {
   const { theme, toggleTheme } = useApp();
 
-  // Authentication State
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  // Authentication State with instant restore on refresh
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('zenith_admin_session');
+        if (saved) return JSON.parse(saved);
+      } catch {}
+    }
+    return null;
+  });
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSuccess, setAuthSuccess] = useState<string | null>(null);
 
-  // Active Sidebar Navigation Tab
-  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'brands' | 'careers' | 'blogs' | 'leads' | 'security'>('overview');
+  // Active Sidebar Navigation Tab with persistent tab memory
+  const [activeTab, _setActiveTab] = useState<'overview' | 'projects' | 'brands' | 'careers' | 'blogs' | 'leads' | 'security'>('overview');
+
+  const setActiveTab = (tab: 'overview' | 'projects' | 'brands' | 'careers' | 'blogs' | 'leads' | 'security') => {
+    _setActiveTab(tab);
+    try {
+      localStorage.setItem('zenith_admin_tab', tab);
+    } catch {}
+  };
 
   // Data states
   const [projects, setProjects] = useState<ProjectCaseStudy[]>([]);
@@ -175,50 +191,59 @@ export default function AdminPage() {
       if (saved) {
         setAdminUser(JSON.parse(saved));
       }
+      const savedTab = localStorage.getItem('zenith_admin_tab');
+      if (savedTab) {
+        _setActiveTab(savedTab as any);
+      }
     } catch { }
+    setIsCheckingSession(false);
   }, []);
 
-  // Fetch all administrative data
+  // Fetch all administrative data with no cache to prevent stale data
   const refreshAllData = async () => {
     setLoadingData(true);
+    const fetchOptions: RequestInit = {
+      cache: 'no-store',
+      headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' },
+    };
     try {
       // 1. Projects
-      const pRes = await fetch('/api/projects');
+      const pRes = await fetch('/api/projects', fetchOptions);
       const pData = await pRes.json();
       if (pData.success && Array.isArray(pData.projects)) {
         setProjects(pData.projects);
       }
 
       // 2. Brands
-      const bRes = await fetch('/api/brands');
+      const bRes = await fetch('/api/brands', fetchOptions);
       const bData = await bRes.json();
       if (bData.success && Array.isArray(bData.brands)) {
         setBrands(bData.brands);
       }
 
       // 3. Careers
-      const cRes = await fetch('/api/careers');
+      const cRes = await fetch('/api/careers', fetchOptions);
       const cData = await cRes.json();
       if (cData.success && Array.isArray(cData.careers)) {
         setCareers(cData.careers);
       }
 
       // 4. Leads
-      const lRes = await fetch('/api/contact');
+      const lRes = await fetch('/api/contact', fetchOptions);
       const lData = await lRes.json();
       if (lData.success && Array.isArray(lData.leads)) {
         setLeads(lData.leads);
       }
 
       // 5. Blogs
-      const blRes = await fetch('/api/blogs');
+      const blRes = await fetch('/api/blogs', fetchOptions);
       const blData = await blRes.json();
       if (blData.success && Array.isArray(blData.blogs)) {
         setBlogs(blData.blogs);
       }
 
       // 6. Admins
-      const adRes = await fetch('/api/admin/auth');
+      const adRes = await fetch('/api/admin/auth', fetchOptions);
       const adData = await adRes.json();
       if (adData.success && Array.isArray(adData.admins)) {
         setAllAdmins(adData.admins);
@@ -272,6 +297,7 @@ export default function AdminPage() {
   const handleLogout = () => {
     setAdminUser(null);
     localStorage.removeItem('zenith_admin_session');
+    localStorage.removeItem('zenith_admin_tab');
   };
 
   // Direct image file uploader for Project Showcase, Brand Logos, and Blogs
@@ -280,6 +306,7 @@ export default function AdminPage() {
     target: 'brand' | 'project' | 'blog'
   ) => {
     const file = e.target.files?.[0];
+    const inputTarget = e.target;
     if (!file) return;
 
     if (target === 'brand') setUploadingBrandLogo(true);
@@ -319,6 +346,7 @@ export default function AdminPage() {
         text: 'Network error uploading image file.',
       });
     } finally {
+      if (inputTarget) inputTarget.value = '';
       if (target === 'brand') setUploadingBrandLogo(false);
       else if (target === 'project') setUploadingProjImage(false);
       else setUploadingBlogImage(false);
@@ -794,7 +822,24 @@ export default function AdminPage() {
   };
 
   // -------------------------------------------------------------
-  // VIEW 1: AUTHENTICATION SCREEN (LOGIN / REGISTER)
+  // VIEW 0: INITIAL SESSION VERIFY (Zero flicker of login form on refresh)
+  // -------------------------------------------------------------
+  if (isCheckingSession) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-[#050b1a] flex flex-col items-center justify-center p-4 transition-colors">
+        <div className="w-16 h-16 bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 rounded-2xl p-2.5 shadow-xl flex items-center justify-center mb-4">
+          <Image src="/logo.png" alt="Zenith" width={48} height={48} className="object-contain animate-pulse" priority />
+        </div>
+        <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-xs font-semibold">
+          <Loader2 className="w-4 h-4 animate-spin text-orange-500" />
+          <span>Verifying Admin Session...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // -------------------------------------------------------------
+  // VIEW 1: AUTHENTICATION SCREEN (LOGIN) - ONLY if definitely not logged in
   // -------------------------------------------------------------
   if (!adminUser) {
     return (
@@ -1583,29 +1628,41 @@ export default function AdminPage() {
 
                     <div>
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        Brand Logo Image (Upload file directly from device)
+                        Brand Logo Image (Upload file directly from device or enter URL)
                       </label>
                       <div className="space-y-2">
-                        <label className="w-full px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-blue-600/20 active:scale-95 transition-all">
-                          {uploadingBrandLogo ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Upload className="w-4 h-4" />
-                          )}
-                          <span>{uploadingBrandLogo ? 'Uploading Logo...' : 'Upload Logo Image'}</span>
+                        <div className="flex items-center gap-2">
+                          <label className="px-3.5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-blue-600/20 active:scale-95 transition-all shrink-0">
+                            {uploadingBrandLogo ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              <Upload className="w-4 h-4" />
+                            )}
+                            <span>{uploadingBrandLogo ? 'Uploading...' : 'Upload Logo'}</span>
+                            <input
+                              type="file"
+                              accept="image/*,.avif,.webp,.svg,.png,.jpg,.jpeg,.ico,.bmp,.jfif"
+                              className="hidden"
+                              onChange={(e) => handleImageUpload(e, 'brand')}
+                            />
+                          </label>
                           <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => handleImageUpload(e, 'brand')}
+                            type="text"
+                            value={brandLogoUrl}
+                            onChange={(e) => setBrandLogoUrl(e.target.value)}
+                            placeholder="Image URL or upload with button"
+                            className="flex-1 px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500"
                           />
-                        </label>
+                        </div>
                         {brandLogoUrl && (
-                          <div className="flex items-center justify-between p-2 bg-slate-50 dark:bg-[#070e22] rounded-xl border border-slate-200 dark:border-slate-800">
-                            <div className="flex items-center gap-2 min-w-0">
+                          <div className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-[#070e22] rounded-xl border border-emerald-500/40 dark:border-emerald-500/40">
+                            <div className="flex items-center gap-2.5 min-w-0">
                               {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img src={brandLogoUrl} alt="Logo Preview" className="h-7 max-w-[80px] object-contain rounded" />
-                              <span className="text-[11px] text-slate-500 truncate max-w-[110px]">{brandLogoUrl}</span>
+                              <img src={brandLogoUrl} alt="Logo Preview" className="h-8 max-w-[100px] object-contain rounded bg-white dark:bg-slate-900 p-0.5 border border-slate-200 dark:border-slate-800" />
+                              <div className="min-w-0">
+                                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">Logo Active & Ready</span>
+                                <span className="text-[10px] text-slate-500 truncate block max-w-[200px] sm:max-w-[260px]">{brandLogoUrl}</span>
+                              </div>
                             </div>
                             <button
                               type="button"
@@ -1613,7 +1670,7 @@ export default function AdminPage() {
                               className="p-1 text-slate-400 hover:text-rose-500 cursor-pointer"
                               title="Remove logo"
                             >
-                              <X className="w-3.5 h-3.5" />
+                              <X className="w-4 h-4" />
                             </button>
                           </div>
                         )}

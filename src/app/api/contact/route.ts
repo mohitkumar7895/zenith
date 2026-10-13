@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, connection } from 'next/server';
 import { ContactModel } from '@/models/contact.model';
 import { ContactLead } from '@/models/types';
 
@@ -55,15 +55,25 @@ export async function POST(request: NextRequest) {
   }
 }
 
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
 export async function GET() {
+  await connection();
   try {
     const result = await ContactModel.findAll();
-    return NextResponse.json({
-      success: true,
-      count: result.leads.length,
-      source: result.source,
-      leads: result.leads,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        count: result.leads.length,
+        source: result.source,
+        leads: result.leads,
+      },
+      { headers: NO_CACHE_HEADERS }
+    );
   } catch (error) {
     return NextResponse.json(
       {
@@ -71,7 +81,7 @@ export async function GET() {
         message: 'Could not fetch leads.',
         error: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500, headers: NO_CACHE_HEADERS }
     );
   }
 }

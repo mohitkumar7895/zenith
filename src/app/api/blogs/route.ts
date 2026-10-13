@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, connection } from 'next/server';
 import { getDbPool, initializeDatabase } from '@/lib/db';
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 
@@ -61,7 +61,14 @@ const FALLBACK_BLOGS = [
   },
 ];
 
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
 export async function GET() {
+  await connection();
   try {
     await initializeDatabase();
     const db = getDbPool();
@@ -71,7 +78,10 @@ export async function GET() {
     );
 
     if (!Array.isArray(rows) || rows.length === 0) {
-      return NextResponse.json({ success: true, blogs: FALLBACK_BLOGS });
+      return NextResponse.json(
+        { success: true, blogs: FALLBACK_BLOGS },
+        { headers: NO_CACHE_HEADERS }
+      );
     }
 
     const formatted = rows.map((r) => {
@@ -92,10 +102,16 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json({ success: true, blogs: formatted });
+    return NextResponse.json(
+      { success: true, blogs: formatted },
+      { headers: NO_CACHE_HEADERS }
+    );
   } catch (error) {
     console.warn('Database error fetching blogs, using fallback:', error);
-    return NextResponse.json({ success: true, blogs: FALLBACK_BLOGS });
+    return NextResponse.json(
+      { success: true, blogs: FALLBACK_BLOGS },
+      { headers: NO_CACHE_HEADERS }
+    );
   }
 }
 

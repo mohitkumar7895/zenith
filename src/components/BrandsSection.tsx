@@ -15,21 +15,25 @@ interface BrandItem {
 
 const FALLBACK_BRANDS: BrandItem[] = [
   {
-    id: 1,
+    id: 10,
     name: 'Jan Seva Portal',
-    description: 'Official Digital Public Services & E-Governance Portal connecting citizens with online government documentation, certificates, and utility solutions.',
+    description:
+      'A Digital Jan Seva & E-Governance Portal providing citizens with easy access to government services, online documentation, certificates, Aadhaar, PAN, bill payments, and public welfare schemes all in one place.',
     category: 'E-Governance',
-    websiteUrl: 'https://jansevaportal.in',
+    websiteUrl: 'https://www.jan-seva.site/',
+    logoUrl: '/uploads/jan-seva-logo-1791908116145.png',
   },
   {
-    id: 2,
+    id: 11,
     name: 'Repnexa',
-    description: 'Next-Gen Enterprise IT Solutions including Custom Software Engineering, Mobile Applications, Cloud Systems, SEO & Digital Performance.',
-    category: 'Technology',
-    websiteUrl: 'https://repnexa.com',
+    description:
+      'Repnexa is a smart service booking platform connecting customers with trusted professionals for AC, Washing Machine, Refrigerator, Mobile, Laptop, CCTV and other repair services. Join as a service partner, receive customer leads, grow your business and earn more.',
+    category: 'Home & Electronics Repair Services',
+    websiteUrl: 'https://repnexa.vercel.app/',
+    logoUrl: '/uploads/repnexa.avif',
   },
   {
-    id: 3,
+    id: 12,
     name: 'Bhartiyebazar',
     description: 'Bhartiyebazar offers awareness and digital Solutions to ecommerce projects.',
     category: 'E-Commerce',
@@ -38,7 +42,18 @@ const FALLBACK_BRANDS: BrandItem[] = [
 ];
 
 export default function BrandsSection() {
-  const [brands, setBrands] = useState<BrandItem[]>(FALLBACK_BRANDS);
+  const [brands, setBrands] = useState<BrandItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const cached = localStorage.getItem('zenith_cached_brands');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch {}
+    }
+    return FALLBACK_BRANDS;
+  });
   const [typedTitle, setTypedTitle] = useState('');
   const [hasScrolledIntoView, setHasScrolledIntoView] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -82,13 +97,19 @@ export default function BrandsSection() {
     return () => clearInterval(typingInterval);
   }, [hasScrolledIntoView]);
 
-  // Fetch brands from MySQL API
+  // Fetch fresh brands from MySQL API without stale cache
   useEffect(() => {
-    fetch('/api/brands')
+    fetch('/api/brands', {
+      cache: 'no-store',
+      headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' },
+    })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.brands) && data.brands.length > 0) {
           setBrands(data.brands);
+          try {
+            localStorage.setItem('zenith_cached_brands', JSON.stringify(data.brands));
+          } catch {}
         }
       })
       .catch(() => {});
@@ -98,12 +119,12 @@ export default function BrandsSection() {
   const renderBrandLogo = (brand: BrandItem) => {
     if (brand.logoUrl && brand.logoUrl.trim() !== '') {
       return (
-        <div className="flex items-center justify-center h-12">
+        <div className="flex items-center justify-center w-full h-20 sm:h-24">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={brand.logoUrl}
             alt={brand.name}
-            className="max-h-12 max-w-[180px] object-contain drop-shadow-xs"
+            className="max-h-20 sm:max-h-24 max-w-[220px] sm:max-w-[260px] object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105"
           />
         </div>
       );
@@ -257,34 +278,42 @@ export default function BrandsSection() {
             return (
               <div
                 key={brand.id || idx}
-                className="group p-5 xs:p-7 sm:p-9 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col items-center text-center justify-between"
+                className="group relative p-5 xs:p-7 sm:p-8 rounded-2xl sm:rounded-3xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800/90 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
               >
-                <div className="w-full flex flex-col items-center">
-                  {/* Brand Logo / Mark */}
-                  <div className="h-16 flex items-center justify-center mb-4 transition-transform group-hover:scale-105 duration-300">
+                <div className="w-full flex flex-col">
+                  {/* Top Corner: Brand Name subtle & light */}
+                  <div className="w-full flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[11px] sm:text-xs font-medium tracking-wide text-slate-400 dark:text-slate-500">
+                      {brand.name}
+                    </span>
+                    {brand.category && (
+                      <span className="text-[10px] font-medium tracking-wider uppercase px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800/80 text-slate-400 dark:text-slate-500 border border-slate-200/50 dark:border-slate-800">
+                        {brand.category}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Brand Logo / Mark - Enlarged & centered */}
+                  <div className="h-20 sm:h-24 flex items-center justify-center my-3 w-full transition-transform group-hover:scale-105 duration-300">
                     {renderBrandLogo(brand)}
                   </div>
 
-                  {/* Brand Name */}
-                  <h3 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white mt-1 group-hover:text-orange-500 transition-colors">
-                    {brand.name}
-                  </h3>
-
                   {/* Clean Short Description */}
-                  <p className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal">
+                  <p className="mt-3 text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed font-normal text-center">
                     {description}
                   </p>
                 </div>
 
                 {/* Visit Website Outline Button */}
-                <div className="mt-8 w-full flex justify-center">
+                <div className="mt-6 w-full flex justify-center">
                   <a
                     href={brand.websiteUrl || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center px-7 py-2.5 rounded-full border border-blue-500/80 dark:border-blue-400/80 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs sm:text-sm font-semibold transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1.5 px-7 py-2.5 rounded-full border border-blue-500/80 dark:border-blue-400/80 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs sm:text-sm font-semibold transition-all duration-200 shadow-2xs hover:shadow-md cursor-pointer"
                   >
                     <span>Visit Website</span>
+                    <ExternalLink className="w-3.5 h-3.5 opacity-70" />
                   </a>
                 </div>
               </div>

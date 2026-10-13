@@ -53,6 +53,12 @@ const DEFAULT_CAREERS: CareerItem[] = [
   },
 ];
 
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
 export async function GET() {
   await connection();
   try {
@@ -73,13 +79,19 @@ export async function GET() {
         description: r.description,
         createdAt: r.createdAt,
       }));
-      return NextResponse.json({ success: true, count: careers.length, careers });
+      return NextResponse.json(
+        { success: true, count: careers.length, careers },
+        { headers: NO_CACHE_HEADERS }
+      );
     }
   } catch (err) {
     console.warn('MySQL careers query error, returning fallback:', err);
   }
 
-  return NextResponse.json({ success: true, count: DEFAULT_CAREERS.length, careers: DEFAULT_CAREERS });
+  return NextResponse.json(
+    { success: true, count: DEFAULT_CAREERS.length, careers: DEFAULT_CAREERS },
+    { headers: NO_CACHE_HEADERS }
+  );
 }
 
 export async function POST(request: NextRequest) {

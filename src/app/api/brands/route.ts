@@ -15,27 +15,37 @@ export interface BrandItem {
 
 const DEFAULT_BRANDS: BrandItem[] = [
   {
-    id: 1,
+    id: 10,
     name: 'Jan Seva Portal',
-    description: 'Official Digital Public Services & E-Governance Portal connecting citizens with online government documentation, certificates, and utility solutions.',
+    description:
+      'A Digital Jan Seva & E-Governance Portal providing citizens with easy access to government services, online documentation, certificates, Aadhaar, PAN, bill payments, and public welfare schemes all in one place.',
     category: 'E-Governance',
-    websiteUrl: 'https://jansevaportal.in',
+    websiteUrl: 'https://www.jan-seva.site/',
+    logoUrl: '/uploads/jan-seva-logo-1791908116145.png',
   },
   {
-    id: 2,
+    id: 11,
     name: 'Repnexa',
-    description: 'Next-Gen Enterprise IT Solutions including Custom Software Engineering, Mobile Applications, Cloud Systems, SEO & Digital Performance.',
-    category: 'Technology',
-    websiteUrl: 'https://repnexa.com',
+    description:
+      'Repnexa is a smart service booking platform connecting customers with trusted professionals for AC, Washing Machine, Refrigerator, Mobile, Laptop, CCTV and other repair services. Join as a service partner, receive customer leads, grow your business and earn more.',
+    category: 'Home & Electronics Repair Services',
+    websiteUrl: 'https://repnexa.vercel.app/',
+    logoUrl: '/uploads/repnexa.avif',
   },
   {
-    id: 3,
+    id: 12,
     name: 'Bhartiyebazar',
     description: 'Bhartiyebazar offers awareness and digital Solutions to ecommerce projects.',
     category: 'E-Commerce',
     websiteUrl: 'https://bhartiyebazar.com',
   },
 ];
+
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
 
 export async function GET() {
   await connection();
@@ -47,13 +57,19 @@ export async function GET() {
     );
 
     if (Array.isArray(rows) && rows.length > 0) {
-      return NextResponse.json({ success: true, count: rows.length, brands: rows });
+      return NextResponse.json(
+        { success: true, count: rows.length, brands: rows },
+        { headers: NO_CACHE_HEADERS }
+      );
     }
   } catch (err) {
     console.warn('MySQL brands query error, returning fallback:', err);
   }
 
-  return NextResponse.json({ success: true, count: DEFAULT_BRANDS.length, brands: DEFAULT_BRANDS });
+  return NextResponse.json(
+    { success: true, count: DEFAULT_BRANDS.length, brands: DEFAULT_BRANDS },
+    { headers: NO_CACHE_HEADERS }
+  );
 }
 
 export async function POST(request: NextRequest) {

@@ -14,11 +14,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate mime type
-    const validMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/gif'];
-    if (!validMimes.includes(file.type)) {
+    // Validate image format - accept modern image mime types or image extensions
+    const validMimes = [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/svg+xml',
+      'image/gif',
+      'image/avif',
+      'image/x-icon',
+      'image/vnd.microsoft.icon',
+      'image/bmp',
+      'image/jfif',
+      'image/tiff',
+      'image/apng',
+    ];
+    const ext = (path.extname(file.name) || '').toLowerCase();
+    const validExtensions = [
+      '.jpg',
+      '.jpeg',
+      '.png',
+      '.webp',
+      '.svg',
+      '.gif',
+      '.avif',
+      '.ico',
+      '.bmp',
+      '.jfif',
+      '.tif',
+      '.tiff',
+    ];
+
+    const isMimeValid =
+      file.type ? validMimes.includes(file.type.toLowerCase()) || file.type.startsWith('image/') : false;
+    const isExtValid = validExtensions.includes(ext);
+
+    if (!isMimeValid && !isExtValid) {
       return NextResponse.json(
-        { success: false, message: 'Invalid file format. Please upload JPG, PNG, WEBP or SVG.' },
+        {
+          success: false,
+          message:
+            'Invalid image format. Supported formats: JPG, PNG, WEBP, AVIF, SVG, GIF, ICO, BMP.',
+        },
         { status: 400 }
       );
     }
@@ -30,13 +67,12 @@ export async function POST(request: NextRequest) {
     // Generate safe unique filename
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    const ext = path.extname(file.name) || '.png';
+    const fileExt = ext || path.extname(file.name) || '.png';
     const cleanBase = path
-      .basename(file.name, ext)
+      .basename(file.name, fileExt)
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '-');
-    const fileName = `${cleanBase}-${Date.now()}${ext}`;
+    const fileName = `${cleanBase || 'image'}-${Date.now()}${fileExt}`;
     const filePath = path.join(uploadsDir, fileName);
 
     await fs.writeFile(filePath, buffer);

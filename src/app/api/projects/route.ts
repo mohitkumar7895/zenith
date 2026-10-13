@@ -5,6 +5,12 @@ import { CASE_STUDIES_DATA } from '@/lib/data';
 import { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import { ProjectCaseStudy } from '@/models/types';
 
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+};
+
 export async function GET() {
   await connection();
   try {
@@ -22,13 +28,19 @@ export async function GET() {
         impactMetrics: typeof r.impactMetrics === 'string' ? JSON.parse(r.impactMetrics) : r.impactMetrics || [],
         tags: typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags || [],
       }));
-      return NextResponse.json({ success: true, count: projects.length, projects });
+      return NextResponse.json(
+        { success: true, count: projects.length, projects },
+        { headers: NO_CACHE_HEADERS }
+      );
     }
   } catch (err) {
     console.warn('Could not query case_studies from MySQL:', err);
   }
 
-  return NextResponse.json({ success: true, count: CASE_STUDIES_DATA.length, projects: CASE_STUDIES_DATA });
+  return NextResponse.json(
+    { success: true, count: CASE_STUDIES_DATA.length, projects: CASE_STUDIES_DATA },
+    { headers: NO_CACHE_HEADERS }
+  );
 }
 
 export async function POST(request: NextRequest) {
