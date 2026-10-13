@@ -39,11 +39,11 @@ export default function Footer() {
             <div>
               <h3 className="text-xs uppercase font-bold tracking-wider text-white mb-2.5 sm:mb-4">Core Practices</h3>
               <ul className="space-y-1.5 sm:space-y-2.5 text-xs text-slate-400">
-                <li><a href="#services" className="hover:text-amber-400 transition-colors">Custom Websites</a></li>
-                <li><a href="#services" className="hover:text-amber-400 transition-colors">Android Apps</a></li>
-                <li><a href="#services" className="hover:text-amber-400 transition-colors">Graphic & Logos</a></li>
-                <li><a href="#services" className="hover:text-amber-400 transition-colors">Google & Meta Ads</a></li>
-                <li><a href="#services" className="hover:text-amber-400 transition-colors">SEO & Cloudflare</a></li>
+                <li><Link href="/services/custom-website-development" className="hover:text-amber-400 transition-colors">Custom Websites</Link></li>
+                <li><Link href="/services/android-app-development" className="hover:text-amber-400 transition-colors">Android Apps</Link></li>
+                <li><Link href="/services/graphic-designing" className="hover:text-amber-400 transition-colors">Graphic Designing</Link></li>
+                <li><Link href="/services/logo-banner-designing" className="hover:text-amber-400 transition-colors">Logo & Banners</Link></li>
+                <li><Link href="/services/paid-ads-google-meta" className="hover:text-amber-400 transition-colors">Google & Meta Ads</Link></li>
               </ul>
             </div>
 
@@ -51,11 +51,11 @@ export default function Footer() {
             <div>
               <h3 className="text-xs uppercase font-bold tracking-wider text-white mb-2.5 sm:mb-4">Solutions</h3>
               <ul className="space-y-1.5 sm:space-y-2.5 text-xs text-slate-400">
-                <li><span className="hover:text-slate-200">E-Commerce Stores</span></li>
-                <li><span className="hover:text-slate-200">Business CRMs</span></li>
-                <li><span className="hover:text-slate-200">Mobile Systems</span></li>
-                <li><span className="hover:text-slate-200">High-ROI Funnels</span></li>
-                <li><span className="hover:text-slate-200">Maintenance Plans</span></li>
+                <li><Link href="/services/web-app-crm-development" className="hover:text-amber-400 transition-colors">Business CRMs</Link></li>
+                <li><Link href="/services/seo-performance-optimization" className="hover:text-amber-400 transition-colors">SEO & Speed</Link></li>
+                <li><Link href="/services/hosting-cloudflare-setup" className="hover:text-amber-400 transition-colors">Cloud & Hosting</Link></li>
+                <li><Link href="/services/website-maintenance-support" className="hover:text-amber-400 transition-colors">Maintenance Plans</Link></li>
+                <li><Link href="/services" className="hover:text-amber-400 font-semibold text-amber-500/90 transition-colors">View All Services →</Link></li>
               </ul>
             </div>
           </div>
@@ -96,6 +96,8 @@ export default function Footer() {
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-slate-500 text-center sm:text-left">
           <p>© 2026 Zenith Web Works. All rights reserved. • We Build Ideas For A Better Web</p>
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+            <Link href="/sitemap" className="text-amber-400/90 hover:text-amber-300 font-semibold transition-colors">HTML Sitemap</Link>
+            <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">Sitemap.xml</a>
             <Link href="/privacy" className="hover:text-amber-400 transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-amber-400 transition-colors">Terms & Conditions</Link>
             <Link href="/contact" className="hover:text-amber-400 transition-colors">Direct Support</Link>

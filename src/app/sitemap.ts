@@ -1,10 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { SERVICES_DATA } from '@/lib/data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.io';
   const lastModified = new Date();
 
-  return [
+  // Core static pages
+  const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,
       lastModified,
@@ -54,6 +56,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${baseUrl}/sitemap`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
+    {
       url: `${baseUrl}/privacy`,
       lastModified,
       changeFrequency: 'yearly',
@@ -66,4 +74,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.3,
     },
   ];
+
+  // Dynamic Service Keyword Landing Pages
+  const servicePages: MetadataRoute.Sitemap = SERVICES_DATA.map((service) => ({
+    url: `${baseUrl}/services/${service.slug}`,
+    lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  }));
+
+  return [...staticPages, ...servicePages];
 }
