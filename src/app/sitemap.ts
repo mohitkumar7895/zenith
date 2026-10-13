@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { SERVICES_DATA } from '@/lib/data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.io';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
   const lastModified = new Date();
 
   // Core static pages

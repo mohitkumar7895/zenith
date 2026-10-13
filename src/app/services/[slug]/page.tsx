@@ -49,7 +49,7 @@ export async function generateMetadata({
     };
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.io';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
   const imageUrl = SERVICE_IMAGES[slug] || '/icon.png';
 
   return {
@@ -101,7 +101,7 @@ export default async function ServiceDetailPage({
     notFound();
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.io';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
   const serviceImage = SERVICE_IMAGES[slug] || '/services/web-dev.jpg';
   const otherServices = SERVICES_DATA.filter((s) => s.slug !== slug).slice(0, 4);
 

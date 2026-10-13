@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import InquiryModal from '@/components/InquiryModal';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.io';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
