@@ -38,6 +38,7 @@ import {
   Shield,
   ShieldCheck,
   KeyRound,
+  Pencil,
 } from 'lucide-react';
 
 interface BrandItem {
@@ -89,8 +90,6 @@ export default function AdminPage() {
 
   // Authentication State
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
-  const [authName, setAuthName] = useState('');
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
@@ -109,7 +108,8 @@ export default function AdminPage() {
   const [allAdmins, setAllAdmins] = useState<AdminUser[]>([]);
   const [loadingData, setLoadingData] = useState(false);
 
-  // Project Form
+  // Project Form & Edit State
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [projTitle, setProjTitle] = useState('');
   const [projIndustry, setProjIndustry] = useState('');
   const [projCategory, setProjCategory] = useState('Web Platforms');
@@ -118,7 +118,8 @@ export default function AdminPage() {
   const [projTags, setProjTags] = useState('Next.js 16, MySQL, Cloud, Tailwind CSS');
   const [savingProject, setSavingProject] = useState(false);
 
-  // Brand Form
+  // Brand Form & Edit State
+  const [editingBrandId, setEditingBrandId] = useState<number | null>(null);
   const [brandName, setBrandName] = useState('');
   const [brandDescription, setBrandDescription] = useState('');
   const [brandLogoUrl, setBrandLogoUrl] = useState('');
@@ -128,7 +129,8 @@ export default function AdminPage() {
   const [uploadingBrandLogo, setUploadingBrandLogo] = useState(false);
   const [uploadingProjImage, setUploadingProjImage] = useState(false);
 
-  // Career Form
+  // Career Form & Edit State
+  const [editingCareerId, setEditingCareerId] = useState<number | null>(null);
   const [careerTitle, setCareerTitle] = useState('');
   const [careerDept, setCareerDept] = useState('Engineering');
   const [careerLoc, setCareerLoc] = useState('Remote (India)');
@@ -137,7 +139,8 @@ export default function AdminPage() {
   const [careerDesc, setCareerDesc] = useState('');
   const [savingCareer, setSavingCareer] = useState(false);
 
-  // Blog Form
+  // Blog Form & Edit State
+  const [editingBlogId, setEditingBlogId] = useState<number | null>(null);
   const [blogTitle, setBlogTitle] = useState('');
   const [blogCategory, setBlogCategory] = useState('Web Engineering');
   const [blogAuthor, setBlogAuthor] = useState('Zenith Tech Team');
@@ -245,8 +248,7 @@ export default function AdminPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          action: authMode,
-          name: authName,
+          action: 'login',
           email: authEmail,
           password: authPassword,
         }),
@@ -258,13 +260,8 @@ export default function AdminPage() {
         return;
       }
 
-      if (authMode === 'register') {
-        setAuthSuccess('Account registered successfully! Please sign in with your credentials.');
-        setAuthMode('login');
-      } else {
-        setAdminUser(data.admin);
-        localStorage.setItem('zenith_admin_session', JSON.stringify(data.admin));
-      }
+      setAdminUser(data.admin);
+      localStorage.setItem('zenith_admin_session', JSON.stringify(data.admin));
     } catch {
       setAuthError('Connection error contacting authentication server.');
     } finally {
@@ -328,21 +325,22 @@ export default function AdminPage() {
     }
   };
 
-  // Add Project
-  const handleCreateProject = async (e: React.FormEvent) => {
+  // Add or Update Project
+  const handleSaveProject = async (e: React.FormEvent) => {
     e.preventDefault();
     setSavingProject(true);
     setNotifyMsg(null);
 
+    const isEditing = editingProjectId !== null;
     const impactMetrics: { label: string; value: string }[] = [];
-
     const tagsArray = projTags.split(',').map((t) => t.trim()).filter(Boolean);
 
     try {
       const res = await fetch('/api/projects', {
-        method: 'POST',
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...(isEditing ? { id: editingProjectId } : {}),
           title: projTitle,
           clientIndustry: projIndustry,
           category: projCategory,
@@ -355,10 +353,18 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (data.success) {
-        setNotifyMsg({ type: 'success', text: `Project "${projTitle}" saved to MySQL and live on website!` });
+        setNotifyMsg({
+          type: 'success',
+          text: isEditing
+            ? `Project "${projTitle}" updated successfully!`
+            : `Project "${projTitle}" saved to MySQL and live on website!`,
+        });
+        setEditingProjectId(null);
         setProjTitle('');
         setProjIndustry('');
         setProjSummary('');
+        setProjImage('/services/web-dev.jpg');
+        setProjTags('Next.js 16, MySQL, Cloud, Tailwind CSS');
         refreshAllData();
       } else {
         setNotifyMsg({ type: 'error', text: data.message || 'Error saving project.' });
@@ -370,18 +376,60 @@ export default function AdminPage() {
     }
   };
 
-  // Add Brand
-  const handleCreateBrand = async (e: React.FormEvent) => {
+  const handleStartEditProject = (proj: ProjectCaseStudy) => {
+    setEditingProjectId(String(proj.id));
+    setProjTitle(proj.title);
+    setProjIndustry(proj.clientIndustry);
+    setProjSummary(proj.summary);
+    if (proj.imageUrl) setProjImage(proj.imageUrl);
+    if (Array.isArray(proj.tags)) setProjTags(proj.tags.join(', '));
+    const formElement = document.getElementById('project-form-card');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleCancelEditProject = () => {
+    setEditingProjectId(null);
+    setProjTitle('');
+    setProjIndustry('');
+    setProjSummary('');
+    setProjImage('/services/web-dev.jpg');
+    setProjTags('Next.js 16, MySQL, Cloud, Tailwind CSS');
+  };
+
+  const handleDeleteProject = async (id: string | number, title: string) => {
+    if (!confirm(`Are you sure you want to delete project "${title}"?`)) return;
+    try {
+      const res = await fetch(`/api/projects?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        if (editingProjectId === String(id)) {
+          handleCancelEditProject();
+        }
+        setNotifyMsg({ type: 'success', text: `Project "${title}" deleted.` });
+        refreshAllData();
+      }
+    } catch {
+      setNotifyMsg({ type: 'error', text: 'Error deleting project.' });
+    }
+  };
+
+  // Add or Update Brand
+  const handleSaveBrand = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!brandName) return;
     setSavingBrand(true);
     setNotifyMsg(null);
 
+    const isEditing = editingBrandId !== null;
+
     try {
       const res = await fetch('/api/brands', {
-        method: 'POST',
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...(isEditing ? { id: editingBrandId } : {}),
           name: brandName,
           description: brandDescription,
           logoUrl: brandLogoUrl,
@@ -392,10 +440,18 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (data.success) {
-        setNotifyMsg({ type: 'success', text: `Brand "${brandName}" added to MySQL and live on website!` });
+        setNotifyMsg({
+          type: 'success',
+          text: isEditing
+            ? `Brand "${brandName}" updated successfully!`
+            : `Brand "${brandName}" added to MySQL and live on website!`,
+        });
+        setEditingBrandId(null);
         setBrandName('');
         setBrandDescription('');
         setBrandLogoUrl('');
+        setBrandCategory('Technology');
+        setBrandWebsite('https://');
         refreshAllData();
       } else {
         setNotifyMsg({ type: 'error', text: data.message || 'Error saving brand.' });
@@ -407,6 +463,28 @@ export default function AdminPage() {
     }
   };
 
+  const handleStartEditBrand = (brand: BrandItem) => {
+    setEditingBrandId(brand.id);
+    setBrandName(brand.name);
+    setBrandDescription(brand.description || '');
+    setBrandLogoUrl(brand.logoUrl || '');
+    setBrandCategory(brand.category || 'Technology');
+    setBrandWebsite(brand.websiteUrl || 'https://');
+    const formElement = document.getElementById('brand-form-card');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleCancelEditBrand = () => {
+    setEditingBrandId(null);
+    setBrandName('');
+    setBrandDescription('');
+    setBrandLogoUrl('');
+    setBrandCategory('Technology');
+    setBrandWebsite('https://');
+  };
+
   // Delete Brand
   const handleDeleteBrand = async (id: number, name: string) => {
     if (!confirm(`Are you sure you want to delete brand "${name}"?`)) return;
@@ -414,6 +492,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/brands?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
+        if (editingBrandId === id) {
+          handleCancelEditBrand();
+        }
         setNotifyMsg({ type: 'success', text: `Brand "${name}" removed from website.` });
         refreshAllData();
       }
@@ -422,20 +503,22 @@ export default function AdminPage() {
     }
   };
 
-  // Add Career
-  const handleCreateCareer = async (e: React.FormEvent) => {
+  // Add or Update Career
+  const handleSaveCareer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!careerTitle || !careerDesc) return;
     setSavingCareer(true);
     setNotifyMsg(null);
 
+    const isEditing = editingCareerId !== null;
     const tagsArray = careerTags.split(',').map((t) => t.trim()).filter(Boolean);
 
     try {
       const res = await fetch('/api/careers', {
-        method: 'POST',
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...(isEditing ? { id: editingCareerId } : {}),
           title: careerTitle,
           department: careerDept,
           location: careerLoc,
@@ -447,7 +530,13 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (data.success) {
-        setNotifyMsg({ type: 'success', text: `Job opening "${careerTitle}" posted and live on Careers page!` });
+        setNotifyMsg({
+          type: 'success',
+          text: isEditing
+            ? `Job opening "${careerTitle}" updated successfully!`
+            : `Job opening "${careerTitle}" posted and live on Careers page!`,
+        });
+        setEditingCareerId(null);
         setCareerTitle('');
         setCareerDesc('');
         refreshAllData();
@@ -461,6 +550,26 @@ export default function AdminPage() {
     }
   };
 
+  const handleStartEditCareer = (job: CareerItem) => {
+    setEditingCareerId(job.id);
+    setCareerTitle(job.title);
+    setCareerDept(job.department);
+    setCareerLoc(job.location);
+    setCareerType(job.type);
+    setCareerDesc(job.description);
+    if (Array.isArray(job.tags)) setCareerTags(job.tags.join(', '));
+    const formElement = document.getElementById('career-form-card');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleCancelEditCareer = () => {
+    setEditingCareerId(null);
+    setCareerTitle('');
+    setCareerDesc('');
+  };
+
   // Delete Career
   const handleDeleteCareer = async (id: number, title: string) => {
     if (!confirm(`Are you sure you want to delete position "${title}"?`)) return;
@@ -468,6 +577,9 @@ export default function AdminPage() {
       const res = await fetch(`/api/careers?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
+        if (editingCareerId === id) {
+          handleCancelEditCareer();
+        }
         setNotifyMsg({ type: 'success', text: `Job opening "${title}" removed from Careers page.` });
         refreshAllData();
       }
@@ -476,20 +588,22 @@ export default function AdminPage() {
     }
   };
 
-  // Add Blog
-  const handleCreateBlog = async (e: React.FormEvent) => {
+  // Add or Update Blog
+  const handleSaveBlog = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!blogTitle || !blogSummary) return;
     setSavingBlog(true);
     setNotifyMsg(null);
 
+    const isEditing = editingBlogId !== null;
     const tagsArray = blogTags.split(',').map((t) => t.trim()).filter(Boolean);
 
     try {
       const res = await fetch('/api/blogs', {
-        method: 'POST',
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          ...(isEditing ? { id: editingBlogId } : {}),
           title: blogTitle,
           category: blogCategory,
           author: blogAuthor,
@@ -503,19 +617,48 @@ export default function AdminPage() {
 
       const data = await res.json();
       if (data.success) {
-        setNotifyMsg({ type: 'success', text: `Blog article "${blogTitle}" published live on website!` });
+        setNotifyMsg({
+          type: 'success',
+          text: isEditing
+            ? `Blog article "${blogTitle}" updated successfully!`
+            : `Blog article "${blogTitle}" published live on website!`,
+        });
+        setEditingBlogId(null);
         setBlogTitle('');
         setBlogSummary('');
         setBlogContent('');
         refreshAllData();
       } else {
-        setNotifyMsg({ type: 'error', text: data.message || 'Error publishing blog article.' });
+        setNotifyMsg({ type: 'error', text: data.message || 'Error saving blog article.' });
       }
     } catch {
       setNotifyMsg({ type: 'error', text: 'Error connecting to database server.' });
     } finally {
       setSavingBlog(false);
     }
+  };
+
+  const handleStartEditBlog = (b: BlogItem) => {
+    setEditingBlogId(b.id);
+    setBlogTitle(b.title);
+    setBlogCategory(b.category);
+    setBlogAuthor(b.author || 'Zenith Tech Team');
+    setBlogReadTime(b.readTime || '5 min read');
+    setBlogImage(b.image || '/services/web-dev.jpg');
+    setBlogSummary(b.summary);
+    setBlogContent(b.content || b.summary);
+    if (Array.isArray(b.tags)) setBlogTags(b.tags.join(', '));
+    const formElement = document.getElementById('blog-form-card');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleCancelEditBlog = () => {
+    setEditingBlogId(null);
+    setBlogTitle('');
+    setBlogSummary('');
+    setBlogContent('');
   };
 
   // Delete Blog
@@ -525,11 +668,46 @@ export default function AdminPage() {
       const res = await fetch(`/api/blogs?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
+        if (editingBlogId === id) {
+          handleCancelEditBlog();
+        }
         setNotifyMsg({ type: 'success', text: `Blog article "${title}" deleted from database.` });
         refreshAllData();
       }
     } catch {
       setNotifyMsg({ type: 'error', text: 'Error deleting blog article.' });
+    }
+  };
+
+  // Leads Handlers
+  const handleDeleteLead = async (id: number, name: string) => {
+    if (!confirm(`Are you sure you want to delete lead from "${name}"?`)) return;
+    try {
+      const res = await fetch(`/api/contact?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (data.success) {
+        setNotifyMsg({ type: 'success', text: `Lead from "${name}" deleted successfully.` });
+        refreshAllData();
+      }
+    } catch {
+      setNotifyMsg({ type: 'error', text: 'Error deleting lead.' });
+    }
+  };
+
+  const handleUpdateLeadStatus = async (id: number, newStatus: string) => {
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotifyMsg({ type: 'success', text: `Lead status updated to ${newStatus}.` });
+        refreshAllData();
+      }
+    } catch {
+      setNotifyMsg({ type: 'error', text: 'Error updating lead status.' });
     }
   };
 
@@ -623,7 +801,7 @@ export default function AdminPage() {
       <div className="min-h-screen bg-slate-50 dark:bg-[#050b1a] flex items-center justify-center p-4 transition-colors duration-300">
         <div className="w-full max-w-md bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
           {/* Top Bar with theme toggle & back link */}
-          <div className="flex items-center justify-between pb-6 mb-6 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between mb-6">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-orange-500 transition-colors"
@@ -642,42 +820,12 @@ export default function AdminPage() {
 
           {/* Logo & Headline */}
           <div className="text-center mb-6">
-            <div className="w-12 h-12 bg-white rounded-2xl p-1.5 shadow-md mx-auto mb-3 flex items-center justify-center border border-slate-200 dark:border-slate-800">
-              <Image src="/logo.png" alt="Zenith" width={40} height={40} className="object-contain" />
+            <div className="w-20 h-20 bg-white rounded-2xl p-2.5 shadow-lg mx-auto mb-3 flex items-center justify-center">
+              <Image src="/logo.png" alt="Zenith" width={64} height={64} className="object-contain" priority />
             </div>
             <h1 className="text-2xl font-black text-slate-900 dark:text-white">
               Zenith Admin Portal
             </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Secure administrative access for Zenith Web Works
-            </p>
-          </div>
-
-          {/* Mode Switcher Tabs */}
-          <div className="flex rounded-xl bg-slate-100 dark:bg-[#070e22] p-1 mb-6 border border-slate-200 dark:border-slate-800">
-            <button
-              type="button"
-              onClick={() => { setAuthMode('login'); setAuthError(null); setAuthSuccess(null); }}
-              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${authMode === 'login'
-                  ? 'bg-white dark:bg-[#0b152d] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              <span>Sign In</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => { setAuthMode('register'); setAuthError(null); setAuthSuccess(null); }}
-              className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${authMode === 'register'
-                  ? 'bg-white dark:bg-[#0b152d] text-slate-900 dark:text-white shadow-xs'
-                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
-                }`}
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>Register Admin</span>
-            </button>
           </div>
 
           {/* Alerts */}
@@ -697,22 +845,6 @@ export default function AdminPage() {
 
           {/* Form */}
           <form onSubmit={handleAuth} className="space-y-4">
-            {authMode === 'register' && (
-              <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={authName}
-                  onChange={(e) => setAuthName(e.target.value)}
-                  placeholder="e.g. Mohit Kumar"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-[#060d1f] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white text-xs sm:text-sm focus:outline-none focus:border-orange-500 transition-colors"
-                />
-              </div>
-            )}
-
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
                 Admin Email
@@ -751,26 +883,14 @@ export default function AdminPage() {
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span>Processing...</span>
                 </>
-              ) : authMode === 'login' ? (
+              ) : (
                 <>
                   <LogIn className="w-4 h-4" />
                   <span>Sign In To Admin</span>
                 </>
-              ) : (
-                <>
-                  <UserPlus className="w-4 h-4" />
-                  <span>Register Administrator</span>
-                </>
               )}
             </button>
           </form>
-
-          {/* Quick Default Credentials Hint */}
-          <div className="mt-6 p-3 rounded-xl bg-slate-100 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800 text-center">
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              Default Superadmin: <strong className="text-orange-600 dark:text-orange-400">admin@zenithwebworks.io</strong> • Pass: <strong className="text-orange-600 dark:text-orange-400">admin123</strong>
-            </p>
-          </div>
         </div>
       </div>
     );
@@ -1134,16 +1254,52 @@ export default function AdminPage() {
           {/* 2. PROJECTS TAB */}
           {activeTab === 'projects' && (
             <div className="space-y-8">
-              {/* Add Project Card */}
-              <div className="p-6 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-xs">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <PlusCircle className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Publish New Work / Showcase Project to MySQL
-                  </h3>
+              {/* Add or Edit Project Card */}
+              <div
+                id="project-form-card"
+                className={`p-6 rounded-2xl bg-white dark:bg-[#0b152d] border transition-all shadow-xs ${
+                  editingProjectId
+                    ? 'border-amber-400 dark:border-amber-500/50 ring-2 ring-amber-400/20'
+                    : 'border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    {editingProjectId ? (
+                      <Pencil className="w-5 h-5 text-amber-500" />
+                    ) : (
+                      <PlusCircle className="w-5 h-5 text-orange-500" />
+                    )}
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>{editingProjectId ? 'Edit Showcase Project' : 'Publish New Work / Showcase Project'}</span>
+                        {editingProjectId && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                            Editing ID: {editingProjectId}
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        {editingProjectId
+                          ? 'Modify project details, tags, and showcase imagery'
+                          : 'Saves project to MySQL and renders live on website'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {editingProjectId && (
+                    <button
+                      type="button"
+                      onClick={handleCancelEditProject}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Cancel Edit</span>
+                    </button>
+                  )}
                 </div>
 
-                <form onSubmit={handleCreateProject} className="space-y-4">
+                <form onSubmit={handleSaveProject} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
@@ -1261,14 +1417,33 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="pt-2 flex justify-end">
+                  <div className="pt-2 flex items-center justify-end gap-3">
+                    {editingProjectId && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditProject}
+                        className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    )}
                     <button
                       type="submit"
                       disabled={savingProject}
-                      className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 shadow-md shadow-orange-500/25 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all ${
+                        editingProjectId
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-amber-500/25'
+                          : 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 shadow-orange-500/25'
+                      }`}
                     >
-                      {savingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlusCircle className="w-4 h-4" />}
-                      <span>Save Project To Live Portfolio</span>
+                      {savingProject ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : editingProjectId ? (
+                        <CheckCircle2 className="w-4 h-4" />
+                      ) : (
+                        <PlusCircle className="w-4 h-4" />
+                      )}
+                      <span>{editingProjectId ? 'Save & Update Project' : 'Save Project To Live Portfolio'}</span>
                     </button>
                   </div>
                 </form>
@@ -1283,16 +1458,37 @@ export default function AdminPage() {
                   {projects.map((proj) => (
                     <div
                       key={proj.id}
-                      className="p-4 rounded-xl bg-slate-50 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                      className={`p-4 rounded-xl bg-slate-50 dark:bg-[#070e22] border flex flex-col justify-between transition-all ${
+                        editingProjectId === String(proj.id)
+                          ? 'border-amber-400 dark:border-amber-500 ring-2 ring-amber-400/20 shadow-md'
+                          : 'border-slate-200 dark:border-slate-800'
+                      }`}
                     >
                       <div>
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-[11px] font-bold text-orange-600 dark:text-orange-400">
                             {proj.clientIndustry}
                           </span>
-                          <span className="text-[10px] font-mono text-slate-400">
-                            ID: {proj.id}
-                          </span>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleStartEditProject(proj)}
+                              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                editingProjectId === String(proj.id)
+                                  ? 'text-amber-500 bg-amber-100 dark:bg-amber-950/60'
+                                  : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                              }`}
+                              title="Edit Project"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProject(proj.id, proj.title)}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                              title="Delete Project"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
                         <h4 className="text-sm font-bold text-slate-900 dark:text-white">{proj.title}</h4>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">{proj.summary}</p>
@@ -1324,16 +1520,52 @@ export default function AdminPage() {
           {/* 3. BRANDS TAB (MATCHING USER SCREENSHOT SPECIFICATIONS) */}
           {activeTab === 'brands' && (
             <div className="space-y-8">
-              {/* Add Brand Form */}
-              <div className="p-6 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-xs">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <Building2 className="w-5 h-5 text-blue-500" />
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Add New Brand (Displays as Card on Homepage with Title, Description & Visit Link)
-                  </h3>
+              {/* Add or Edit Brand Form */}
+              <div
+                id="brand-form-card"
+                className={`p-6 rounded-2xl bg-white dark:bg-[#0b152d] border transition-all shadow-xs ${
+                  editingBrandId
+                    ? 'border-amber-400 dark:border-amber-500/50 ring-2 ring-amber-400/20'
+                    : 'border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    {editingBrandId ? (
+                      <Pencil className="w-5 h-5 text-amber-500" />
+                    ) : (
+                      <Building2 className="w-5 h-5 text-blue-500" />
+                    )}
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>{editingBrandId ? 'Edit Brand Details' : 'Add New Brand'}</span>
+                        {editingBrandId && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                            Editing ID #{editingBrandId}
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        {editingBrandId
+                          ? `Modifying "${brandName || 'Brand'}" - changes reflect immediately on website`
+                          : 'Displays as Card on Homepage with Title, Description & Visit Link'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {editingBrandId && (
+                    <button
+                      type="button"
+                      onClick={handleCancelEditBrand}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Cancel Edit</span>
+                    </button>
+                  )}
                 </div>
 
-                <form onSubmit={handleCreateBrand} className="space-y-4">
+                <form onSubmit={handleSaveBrand} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
@@ -1429,20 +1661,39 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="flex justify-end pt-2">
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    {editingBrandId && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditBrand}
+                        className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    )}
                     <button
                       type="submit"
                       disabled={savingBrand}
-                      className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all ${
+                        editingBrandId
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-amber-500/25'
+                          : 'bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-blue-500/25'
+                      }`}
                     >
-                      {savingBrand ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlusCircle className="w-4 h-4" />}
-                      <span>Add Brand To Homepage</span>
+                      {savingBrand ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : editingBrandId ? (
+                        <CheckCircle2 className="w-4 h-4" />
+                      ) : (
+                        <PlusCircle className="w-4 h-4" />
+                      )}
+                      <span>{editingBrandId ? 'Save & Update Brand' : 'Add Brand To Homepage'}</span>
                     </button>
                   </div>
                 </form>
               </div>
 
-              {/* Brands Grid with delete button */}
+              {/* Brands Grid with edit & delete buttons */}
               <div className="p-6 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-xs">
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">
                   Active Homepage Brands ({brands.length})
@@ -1452,7 +1703,11 @@ export default function AdminPage() {
                   {brands.map((b) => (
                     <div
                       key={b.id}
-                      className="p-5 rounded-2xl bg-slate-50 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800 flex flex-col justify-between"
+                      className={`p-5 rounded-2xl bg-slate-50 dark:bg-[#070e22] border flex flex-col justify-between transition-all ${
+                        editingBrandId === b.id
+                          ? 'border-amber-400 dark:border-amber-500 ring-2 ring-amber-400/20 shadow-md'
+                          : 'border-slate-200 dark:border-slate-800'
+                      }`}
                     >
                       <div>
                         <div className="flex items-center justify-between gap-3 mb-2">
@@ -1460,13 +1715,26 @@ export default function AdminPage() {
                             {b.category || 'Client Brand'}
                           </span>
 
-                          <button
-                            onClick={() => handleDeleteBrand(b.id, b.name)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
-                            title="Delete Brand"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleStartEditBrand(b)}
+                              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                editingBrandId === b.id
+                                  ? 'text-amber-500 bg-amber-100 dark:bg-amber-950/60'
+                                  : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                              }`}
+                              title="Edit Brand"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteBrand(b.id, b.name)}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                              title="Delete Brand"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
 
                         {b.logoUrl && (
@@ -1505,16 +1773,50 @@ export default function AdminPage() {
           {/* 4. CAREERS TAB */}
           {activeTab === 'careers' && (
             <div className="space-y-8">
-              {/* Add Career Form */}
-              <div className="p-6 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-xs">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <Briefcase className="w-5 h-5 text-emerald-500" />
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Post New Job Opening to Careers Page (/careers)
-                  </h3>
+              {/* Add or Edit Career Form */}
+              <div
+                id="career-form-card"
+                className={`p-6 rounded-2xl bg-white dark:bg-[#0b152d] border transition-all shadow-xs ${
+                  editingCareerId
+                    ? 'border-amber-400 dark:border-amber-500/50 ring-2 ring-amber-400/20'
+                    : 'border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    {editingCareerId ? (
+                      <Pencil className="w-5 h-5 text-amber-500" />
+                    ) : (
+                      <Briefcase className="w-5 h-5 text-emerald-500" />
+                    )}
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>{editingCareerId ? 'Edit Job Opening' : 'Post New Job Opening to Careers Page'}</span>
+                        {editingCareerId && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                            Editing ID #{editingCareerId}
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        {editingCareerId ? `Modifying "${careerTitle || 'Position'}"` : 'Displays on public /careers page'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {editingCareerId && (
+                    <button
+                      type="button"
+                      onClick={handleCancelEditCareer}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Cancel Edit</span>
+                    </button>
+                  )}
                 </div>
 
-                <form onSubmit={handleCreateCareer} className="space-y-4">
+                <form onSubmit={handleSaveCareer} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
@@ -1584,14 +1886,33 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="flex justify-end pt-2">
+                  <div className="flex items-center justify-end gap-3 pt-2">
+                    {editingCareerId && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditCareer}
+                        className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    )}
                     <button
                       type="submit"
                       disabled={savingCareer}
-                      className="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                      className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all ${
+                        editingCareerId
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-amber-500/25'
+                          : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-md'
+                      }`}
                     >
-                      {savingCareer ? <Loader2 className="w-4 h-4 animate-spin" /> : <PlusCircle className="w-4 h-4" />}
-                      <span>Post Job Opening</span>
+                      {savingCareer ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : editingCareerId ? (
+                        <CheckCircle2 className="w-4 h-4" />
+                      ) : (
+                        <PlusCircle className="w-4 h-4" />
+                      )}
+                      <span>{editingCareerId ? 'Save & Update Job Opening' : 'Post Job Opening'}</span>
                     </button>
                   </div>
                 </form>
@@ -1607,7 +1928,11 @@ export default function AdminPage() {
                   {careers.map((job) => (
                     <div
                       key={job.id}
-                      className="p-5 rounded-2xl bg-slate-50 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4"
+                      className={`p-5 rounded-2xl bg-slate-50 dark:bg-[#070e22] border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${
+                        editingCareerId === job.id
+                          ? 'border-amber-400 dark:border-amber-500 ring-2 ring-amber-400/20 shadow-md'
+                          : 'border-slate-200 dark:border-slate-800'
+                      }`}
                     >
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
@@ -1633,7 +1958,7 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         <Link
                           href="/careers"
                           target="_blank"
@@ -1642,8 +1967,19 @@ export default function AdminPage() {
                           View Live ↗
                         </Link>
                         <button
+                          onClick={() => handleStartEditCareer(job)}
+                          className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                            editingCareerId === job.id
+                              ? 'text-amber-500 bg-amber-100 dark:bg-amber-950/60'
+                              : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                          }`}
+                          title="Edit Position"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
+                        <button
                           onClick={() => handleDeleteCareer(job.id, job.title)}
-                          className="p-2 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
                           title="Delete Position"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1680,6 +2016,7 @@ export default function AdminPage() {
                         <th className="pb-3 font-semibold">Budget</th>
                         <th className="pb-3 font-semibold">Scope Details</th>
                         <th className="pb-3 font-semibold">Status</th>
+                        <th className="pb-3 font-semibold text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
@@ -1712,10 +2049,28 @@ export default function AdminPage() {
                           <td className="py-3.5 pr-3 max-w-xs text-slate-600 dark:text-slate-400 line-clamp-2">
                             {l.projectDetails}
                           </td>
-                          <td className="py-3.5">
-                            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400">
-                              {l.status || 'NEW'}
-                            </span>
+                          <td className="py-3.5 pr-3">
+                            <select
+                              value={l.status || 'NEW'}
+                              onChange={(e) => l.id && handleUpdateLeadStatus(l.id, e.target.value)}
+                              className="px-2 py-1 rounded-lg text-[10px] font-bold bg-slate-100 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 cursor-pointer focus:outline-none"
+                            >
+                              <option value="NEW">NEW</option>
+                              <option value="CONTACTED">CONTACTED</option>
+                              <option value="QUALIFIED">QUALIFIED</option>
+                              <option value="CLOSED">CLOSED</option>
+                            </select>
+                          </td>
+                          <td className="py-3.5 text-right">
+                            {l.id && (
+                              <button
+                                onClick={() => handleDeleteLead(l.id!, l.fullName)}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"
+                                title="Delete Lead"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -1729,16 +2084,52 @@ export default function AdminPage() {
           {/* 6. BLOGS TAB */}
           {activeTab === 'blogs' && (
             <div className="space-y-6">
-              {/* Add Blog Form Card */}
-              <div className="p-6 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-xs">
-                <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
-                  <BookOpen className="w-5 h-5 text-amber-500" />
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                    Publish New Blog Article to Live Website (/blogs)
-                  </h3>
+              {/* Add or Edit Blog Form Card */}
+              <div
+                id="blog-form-card"
+                className={`p-6 rounded-2xl bg-white dark:bg-[#0b152d] border transition-all shadow-xs ${
+                  editingBlogId
+                    ? 'border-amber-400 dark:border-amber-500/50 ring-2 ring-amber-400/20'
+                    : 'border-slate-200 dark:border-slate-800'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    {editingBlogId ? (
+                      <Pencil className="w-5 h-5 text-amber-500" />
+                    ) : (
+                      <BookOpen className="w-5 h-5 text-amber-500" />
+                    )}
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                        <span>{editingBlogId ? 'Edit Blog Article' : 'Publish New Blog Article'}</span>
+                        {editingBlogId && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                            Editing ID #{editingBlogId}
+                          </span>
+                        )}
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        {editingBlogId
+                          ? `Modifying "${blogTitle || 'Article'}" - changes reflect immediately on /blogs`
+                          : 'Publish live technical insights to website and search index'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {editingBlogId && (
+                    <button
+                      type="button"
+                      onClick={handleCancelEditBlog}
+                      className="px-3 py-1.5 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 flex items-center gap-1.5 cursor-pointer transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      <span>Cancel Edit</span>
+                    </button>
+                  )}
                 </div>
 
-                <form onSubmit={handleCreateBlog} className="space-y-4">
+                <form onSubmit={handleSaveBlog} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="sm:col-span-2">
                       <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
@@ -1871,14 +2262,33 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="pt-2">
+                  <div className="pt-2 flex items-center justify-end gap-3">
+                    {editingBlogId && (
+                      <button
+                        type="button"
+                        onClick={handleCancelEditBlog}
+                        className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                      >
+                        Cancel
+                      </button>
+                    )}
                     <button
                       type="submit"
                       disabled={savingBlog}
-                      className="px-6 py-3 rounded-xl text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 shadow-md shadow-orange-500/25 cursor-pointer disabled:opacity-50 flex items-center gap-2"
+                      className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white shadow-md flex items-center gap-2 cursor-pointer disabled:opacity-50 transition-all ${
+                        editingBlogId
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 shadow-amber-500/25'
+                          : 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-400 hover:to-orange-500 shadow-orange-500/25'
+                      }`}
                     >
-                      {savingBlog ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
-                      <span>Publish Blog Post</span>
+                      {savingBlog ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : editingBlogId ? (
+                        <CheckCircle2 className="w-4 h-4" />
+                      ) : (
+                        <BookOpen className="w-4 h-4" />
+                      )}
+                      <span>{editingBlogId ? 'Save & Update Blog Post' : 'Publish Blog Post'}</span>
                     </button>
                   </div>
                 </form>
@@ -1909,7 +2319,11 @@ export default function AdminPage() {
                     {blogs.map((b) => (
                       <div
                         key={b.id}
-                        className="p-4 rounded-xl bg-slate-50 dark:bg-[#070e22] border border-slate-200 dark:border-slate-800/80 flex flex-col justify-between hover:border-amber-500/50 transition-colors"
+                        className={`p-4 rounded-xl bg-slate-50 dark:bg-[#070e22] border flex flex-col justify-between transition-all ${
+                          editingBlogId === b.id
+                            ? 'border-amber-400 dark:border-amber-500 ring-2 ring-amber-400/20 shadow-md'
+                            : 'border-slate-200 dark:border-slate-800/80 hover:border-amber-500/50'
+                        }`}
                       >
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
@@ -1953,6 +2367,17 @@ export default function AdminPage() {
                             >
                               Live ↗
                             </Link>
+                            <button
+                              onClick={() => handleStartEditBlog(b)}
+                              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                editingBlogId === b.id
+                                  ? 'text-amber-500 bg-amber-100 dark:bg-amber-950/60'
+                                  : 'text-slate-400 hover:text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-950/40'
+                              }`}
+                              title="Edit Blog"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
                             <button
                               onClick={() => handleDeleteBlog(b.id, b.title)}
                               className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors cursor-pointer"

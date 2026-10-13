@@ -195,3 +195,65 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    await initializeDatabase();
+    const body = await request.json();
+    const {
+      id,
+      title,
+      category = 'Web Engineering',
+      author = 'Zenith Engineering Team',
+      readTime = '5 min read',
+      image = '/services/web-dev.jpg',
+      summary,
+      content,
+      tags = [],
+    } = body;
+
+    if (!id || !title || !summary) {
+      return NextResponse.json(
+        { success: false, message: 'Blog ID, title, and summary are required.' },
+        { status: 400 }
+      );
+    }
+
+    const tagsJson = JSON.stringify(
+      Array.isArray(tags)
+        ? tags
+        : typeof tags === 'string'
+        ? tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+        : [tags]
+    );
+
+    const db = getDbPool();
+    await db.execute<ResultSetHeader>(
+      'UPDATE blogs SET title = ?, category = ?, author = ?, readTime = ?, image = ?, summary = ?, content = ?, tags = ? WHERE id = ?',
+      [
+        title.trim(),
+        category.trim(),
+        author.trim(),
+        readTime.trim(),
+        image.trim(),
+        summary.trim(),
+        (content || summary).trim(),
+        tagsJson,
+        id,
+      ]
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: 'Blog article updated successfully!',
+      blogId: id,
+    });
+  } catch (error) {
+    console.error('Error updating blog post:', error);
+    return NextResponse.json(
+      { success: false, message: 'Database error updating blog article.' },
+      { status: 500 }
+    );
+  }
+}
+

@@ -75,3 +75,55 @@ export async function GET() {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ success: false, message: 'Lead ID is required.' }, { status: 400 });
+    }
+
+    const { getDbPool, initializeDatabase } = await import('@/lib/db');
+    await initializeDatabase();
+    const db = getDbPool();
+    await db.execute('DELETE FROM contacts WHERE id = ?', [id]);
+
+    return NextResponse.json({ success: true, message: `Lead #${id} deleted successfully.` });
+  } catch (error) {
+    console.error('Error deleting contact lead:', error);
+    return NextResponse.json(
+      { success: false, message: 'Database error deleting contact lead.' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, status } = body;
+
+    if (!id || !status) {
+      return NextResponse.json(
+        { success: false, message: 'Lead ID and new status are required.' },
+        { status: 400 }
+      );
+    }
+
+    const { getDbPool, initializeDatabase } = await import('@/lib/db');
+    await initializeDatabase();
+    const db = getDbPool();
+    await db.execute('UPDATE contacts SET status = ? WHERE id = ?', [status, id]);
+
+    return NextResponse.json({ success: true, message: `Lead status updated to ${status}.` });
+  } catch (error) {
+    console.error('Error updating contact status:', error);
+    return NextResponse.json(
+      { success: false, message: 'Database error updating contact status.' },
+      { status: 500 }
+    );
+  }
+}
+

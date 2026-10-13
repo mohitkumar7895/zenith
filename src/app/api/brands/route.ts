@@ -117,3 +117,51 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    await initializeDatabase();
+    const body = await request.json();
+    const { id, name, description, logoUrl, websiteUrl, category } = body;
+
+    if (!id || !name) {
+      return NextResponse.json(
+        { success: false, message: 'Brand ID and name are required.' },
+        { status: 400 }
+      );
+    }
+
+    const db = getDbPool();
+    await db.execute(
+      'UPDATE brands SET name = ?, description = ?, logoUrl = ?, websiteUrl = ?, category = ? WHERE id = ?',
+      [
+        name.trim(),
+        description || '',
+        logoUrl || null,
+        websiteUrl || null,
+        category || 'Enterprise Client',
+        id,
+      ]
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: 'Brand updated successfully!',
+      brand: {
+        id: Number(id),
+        name: name.trim(),
+        description,
+        logoUrl,
+        websiteUrl,
+        category: category || 'Enterprise Client',
+      },
+    });
+  } catch (error) {
+    console.error('Error updating brand:', error);
+    return NextResponse.json(
+      { success: false, message: 'Database error updating brand.' },
+      { status: 500 }
+    );
+  }
+}
+

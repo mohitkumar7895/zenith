@@ -160,3 +160,59 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    await initializeDatabase();
+    const body = await request.json();
+    const { id, title, department, location, type, tags, description } = body;
+
+    if (!id || !title || !department || !description) {
+      return NextResponse.json(
+        { success: false, message: 'Please provide ID, Title, Department, and Description.' },
+        { status: 400 }
+      );
+    }
+
+    const tagsArray = Array.isArray(tags)
+      ? tags
+      : typeof tags === 'string'
+      ? tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      : [];
+
+    const db = getDbPool();
+    await db.execute<ResultSetHeader>(
+      'UPDATE careers SET title = ?, department = ?, location = ?, type = ?, tags = ?, description = ? WHERE id = ?',
+      [
+        title,
+        department,
+        location || 'Remote / Hybrid',
+        type || 'Full-Time',
+        JSON.stringify(tagsArray),
+        description,
+        id,
+      ]
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: 'Job opening updated successfully!',
+      career: {
+        id: Number(id),
+        title,
+        department,
+        location: location || 'Remote / Hybrid',
+        type: type || 'Full-Time',
+        tags: tagsArray,
+        description,
+      },
+    });
+  } catch (error) {
+    console.error('Error updating career:', error);
+    return NextResponse.json(
+      { success: false, message: 'Database error updating job opening.' },
+      { status: 500 }
+    );
+  }
+}
+

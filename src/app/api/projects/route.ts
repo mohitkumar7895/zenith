@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const db = getDbPool();
     const [rows] = await db.query<RowDataPacket[]>(
-      'SELECT id, title, clientIndustry, summary, impactMetrics, tags FROM case_studies ORDER BY createdAt DESC'
+      'SELECT id, title, clientIndustry, summary, impactMetrics, tags, imageUrl FROM case_studies ORDER BY createdAt DESC'
     );
     if (Array.isArray(rows) && rows.length > 0) {
       const projects: ProjectCaseStudy[] = rows.map((r) => ({
@@ -18,6 +18,7 @@ export async function GET() {
         title: r.title,
         clientIndustry: r.clientIndustry,
         summary: r.summary,
+        imageUrl: r.imageUrl || undefined,
         impactMetrics: typeof r.impactMetrics === 'string' ? JSON.parse(r.impactMetrics) : r.impactMetrics || [],
         tags: typeof r.tags === 'string' ? JSON.parse(r.tags) : r.tags || [],
       }));
@@ -52,14 +53,15 @@ export async function POST(request: NextRequest) {
 
     const db = getDbPool();
     await db.execute<ResultSetHeader>(
-      `INSERT INTO case_studies (id, title, clientIndustry, summary, impactMetrics, tags)
-       VALUES (?, ?, ?, ?, ?, ?)
+      `INSERT INTO case_studies (id, title, clientIndustry, summary, impactMetrics, tags, imageUrl)
+       VALUES (?, ?, ?, ?, ?, ?, ?)
        ON DUPLICATE KEY UPDATE 
        title = VALUES(title), 
        clientIndustry = VALUES(clientIndustry), 
        summary = VALUES(summary), 
        impactMetrics = VALUES(impactMetrics), 
-       tags = VALUES(tags)`,
+       tags = VALUES(tags),
+       imageUrl = VALUES(imageUrl)`,
       [
         id,
         title,
@@ -67,6 +69,7 @@ export async function POST(request: NextRequest) {
         summary,
         JSON.stringify(formattedMetrics),
         JSON.stringify(formattedTags),
+        body.imageUrl || null,
       ]
     );
 
@@ -123,3 +126,70 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, title, clientIndustry, summary, impactMetrics, tags, imageUrl } = body;
+
+    if (!id || !title || !clientIndustry || !summary) {
+      return NextResponse.json(
+        { success: false, message: 'Please provide Project ID, Title, Industry, and Summary.' },
+        { status: 400 }
+      );
+    }
+
+    const formattedMetrics = Array.isArray(impactMetrics) ? impactMetrics : [];
+    const formattedTags = Array.isArray(tags)
+      ? tags
+      : typeof tags === 'string'
+      ? tags.split(',').map((t: string) => t.trim()).filter(Boolean)
+      : [];
+
+    const db = getDbPool();
+    await db.execute<ResultSetHeader>(
+      `UPDATE case_studies SET
+       title = ?,
+       clientIndustry = ?,
+       summary = ?,
+       impactMetrics = ?,
+       tags = ?,
+       imageUrl = ?
+       WHERE id = ?`,
+      [
+        title,
+        clientIndustry,
+        summary,
+        JSON.stringify(formattedMetrics),
+        JSON.stringify(formattedTags),
+        imageUrl || null,
+        id,
+      ]
+    );
+
+    return NextResponse.json({
+      success: true,
+      message: 'Project updated successfully!',
+      project: {
+        id,
+        title,
+        clientIndustry,
+        summary,
+        impactMetrics: formattedMetrics,
+        tags: formattedTags,
+        imageUrl,
+      },
+    });
+  } catch (error) {
+    console.error('Error updating project:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Failed to update project in database.',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
+  }
+}
+
