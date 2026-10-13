@@ -115,10 +115,10 @@ export async function initializeDatabase(): Promise<boolean> {
     const [brandRows] = await db.query('SELECT id FROM brands LIMIT 1');
     if (Array.isArray(brandRows) && brandRows.length === 0) {
       await db.query(`
-        INSERT INTO brands (name, description, category, websiteUrl) VALUES
-        ('Jan Seva Portal', 'Official Digital Public Services & E-Governance Portal connecting citizens with online government documentation, certificates, and utility solutions.', 'E-Governance', 'https://jansevaportal.in'),
-        ('Repnexa', 'Next-Gen Enterprise IT Solutions including Custom Software Engineering, Mobile Applications, Cloud Systems, SEO & Digital Performance.', 'Technology', 'https://repnexa.com'),
-        ('Bhartiyebazar', 'Bhartiyebazar offers awareness and digital Solutions to ecommerce projects.', 'E-Commerce', 'https://bhartiyebazar.com');
+        INSERT INTO brands (name, description, category, websiteUrl, logoUrl) VALUES
+        ('Jan Seva Portal', 'A Digital Jan Seva & E-Governance Portal providing citizens with easy access to government services, online documentation, certificates, Aadhaar, PAN, bill payments, and public welfare schemes all in one place.', 'E-Governance', 'https://www.jan-seva.site/', '/uploads/jan-seva-logo-1791908116145.png'),
+        ('Repnexa', 'Repnexa is a smart service booking platform connecting customers with trusted professionals for AC, Washing Machine, Refrigerator, Mobile, Laptop, CCTV and other repair services. Join as a service partner, receive customer leads, grow your business and earn more.', 'Home & Electronics Repair Services', 'https://repnexa.vercel.app/', '/uploads/repnexa.avif'),
+        ('Bhartiyebazar', 'Bhartiyebazar offers awareness and digital Solutions to ecommerce projects.', 'E-Commerce', 'https://bhartiyebazar.com', NULL);
       `);
     }
 

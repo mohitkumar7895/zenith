@@ -45,7 +45,8 @@ export default function BrandsSection() {
   const [brands, setBrands] = useState<BrandItem[]>(() => {
     if (typeof window !== 'undefined') {
       try {
-        const cached = localStorage.getItem('zenith_cached_brands');
+        localStorage.removeItem('zenith_cached_brands');
+        const cached = localStorage.getItem('zenith_brands_v3');
         if (cached) {
           const parsed = JSON.parse(cached);
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -108,7 +109,7 @@ export default function BrandsSection() {
         if (data.success && Array.isArray(data.brands) && data.brands.length > 0) {
           setBrands(data.brands);
           try {
-            localStorage.setItem('zenith_cached_brands', JSON.stringify(data.brands));
+            localStorage.setItem('zenith_brands_v3', JSON.stringify(data.brands));
           } catch {}
         }
       })

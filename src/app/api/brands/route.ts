@@ -52,6 +52,17 @@ export async function GET() {
   try {
     await initializeDatabase();
     const db = getDbPool();
+
+    // Auto-sync default brand details to ensure live database has the latest URLs and logos
+    for (const b of DEFAULT_BRANDS) {
+      try {
+        await db.execute(
+          'UPDATE brands SET description = ?, logoUrl = ?, websiteUrl = ?, category = ? WHERE name = ?',
+          [b.description || '', b.logoUrl || null, b.websiteUrl || null, b.category || '', b.name]
+        );
+      } catch {}
+    }
+
     const [rows] = await db.query<RowDataPacket[]>(
       'SELECT id, name, description, logoUrl, websiteUrl, category, createdAt FROM brands ORDER BY id ASC'
     );
