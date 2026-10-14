@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse, connection } from 'next/server';
 import { ContactModel } from '@/models/contact.model';
 import { ContactLead } from '@/models/types';
+import { sendLeadNotificationEmail } from '@/lib/email';
 
 
 export async function POST(request: NextRequest) {
@@ -33,12 +34,26 @@ export async function POST(request: NextRequest) {
 
     const result = await ContactModel.create(leadData);
 
+    // Send notification email to admin/recipients via Resend
+    let emailResult: { success: boolean; error?: string; messageId?: string } = { success: false };
+    try {
+      emailResult = await sendLeadNotificationEmail(leadData);
+    } catch (emailErr) {
+      console.error('Error triggering lead notification email:', emailErr);
+      emailResult = {
+        success: false,
+        error: emailErr instanceof Error ? emailErr.message : 'Unknown email error',
+      };
+    }
+
     return NextResponse.json(
       {
         success: true,
         message: 'Your inquiry has been logged successfully.',
         leadId: result.id,
         savedToMysql: result.savedToMysql,
+        emailSent: emailResult.success,
+        emailError: emailResult.error,
       },
       { status: 201 }
     );
