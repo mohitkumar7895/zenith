@@ -5,6 +5,7 @@ import { AppProvider } from '@/context/AppContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import InquiryModal from '@/components/InquiryModal';
+import FloatingActions from '@/components/FloatingActions';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
 
@@ -207,6 +208,7 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
           <InquiryModal />
+          <FloatingActions />
         </AppProvider>
       </body>
     </html>

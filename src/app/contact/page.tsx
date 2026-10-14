@@ -143,13 +143,21 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Phone & WhatsApp</h3>
-                  <a
-                    href="tel:+917895094129"
-                    className="text-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-emerald-500 transition-colors mt-0.5 block"
-                  >
-                    +91 7895094129
-                  </a>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex flex-col gap-0.5 mt-0.5">
+                    <a
+                      href="tel:+917895094129"
+                      className="text-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-emerald-500 transition-colors"
+                    >
+                      +91 7895094129 (Primary)
+                    </a>
+                    <a
+                      href="tel:+919193648939"
+                      className="text-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-emerald-500 transition-colors"
+                    >
+                      +91 9193648939 (Support)
+                    </a>
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Mon – Sat, 9:30 AM to 7:30 PM IST
                   </p>
                 </div>

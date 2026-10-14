@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { SERVICES_DATA } from '@/lib/data';
+import { UP_DISTRICTS } from '@/lib/upDistricts';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
@@ -59,7 +60,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/sitemap`,
       lastModified,
       changeFrequency: 'weekly',
-      priority: 0.6,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/privacy`,
@@ -83,5 +84,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
-  return [...staticPages, ...servicePages];
+  // Dynamic District Landing Pages for all 75 Districts of Uttar Pradesh
+  const districtPages: MetadataRoute.Sitemap = UP_DISTRICTS.map((district) => ({
+    url: `${baseUrl}/locations/${district.slug}`,
+    lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.8,
+  }));
+
+  return [...staticPages, ...servicePages, ...districtPages];
 }
