@@ -21,6 +21,8 @@ import {
   Building2,
   Globe2,
   MessageCircle,
+  Hash,
+  FolderTree,
 } from 'lucide-react';
 import PageHeaderBanner from '@/components/PageHeaderBanner';
 
@@ -34,6 +36,7 @@ const ZONES = ['All', 'NCR / Western UP', 'Central UP', 'Eastern UP', 'Bundelkha
 export default function SitemapPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedZone, setSelectedZone] = useState<string>('All');
+  const [viewMode, setViewMode] = useState<'cards' | 'divisions' | 'az'>('cards');
 
   const mainPages = [
     { title: 'Home Page', href: '/', desc: 'Full agency overview, core stats, and featured engineering projects.' },
@@ -50,6 +53,22 @@ export default function SitemapPage() {
     { title: 'Privacy Policy', href: '/privacy', desc: 'Our policies on data protection and client confidentiality.' },
     { title: 'Terms & Conditions', href: '/terms', desc: 'Terms governing service delivery, IP ownership, and warranties.' },
   ];
+
+  // Alphabetical sort of all 75 districts
+  const alphabeticalDistricts = useMemo(() => {
+    return [...UP_DISTRICTS].sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
+  // Grouped by 18 Administrative Divisions
+  const divisionsMap = useMemo(() => {
+    const map = new Map<string, typeof UP_DISTRICTS>();
+    UP_DISTRICTS.forEach((d) => {
+      const existing = map.get(d.division) || [];
+      existing.push(d);
+      map.set(d.division, existing);
+    });
+    return Array.from(map.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  }, []);
 
   // Filter districts based on search query and zone tab
   const filteredDistricts = useMemo(() => {
@@ -196,125 +215,233 @@ export default function SitemapPage() {
                   Uttar Pradesh Local District Directory (All 75 Districts)
                 </h2>
                 <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                  We provide on-site &amp; remote web development, app development, CRMs, and SEO across every single district of Uttar Pradesh.
+                  Every district of Uttar Pradesh has a dedicated landing page with customized services, local industry specs, and direct lead generation.
                 </p>
               </div>
             </div>
 
-            <div className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 self-start sm:self-auto">
-              Total Districts Covered: {UP_DISTRICTS.length} / 75
-            </div>
-          </div>
-
-          {/* Search Bar & Zone Filter Tabs */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
-              
-              {/* Search input */}
-              <div className="relative flex-1">
-                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search by district name, Hindi name, division, or industry (e.g. Noida, Kanpur, Banaras, Peetal, Carpet)..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                />
-              </div>
-
-              {/* Zone Filter Buttons */}
-              <div className="flex flex-wrap items-center gap-1.5">
-                {ZONES.map((zone) => {
-                  const count = zone === 'All' ? UP_DISTRICTS.length : UP_DISTRICTS.filter((d) => d.zone === zone).length;
-                  const isActive = selectedZone === zone;
-                  return (
-                    <button
-                      key={zone}
-                      onClick={() => setSelectedZone(zone)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                        isActive
-                          ? 'bg-amber-500 text-slate-950 shadow-sm'
-                          : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                      }`}
-                    >
-                      {zone} ({count})
-                    </button>
-                  );
-                })}
-              </div>
-
-            </div>
-
-            {filteredDistricts.length === 0 && (
-              <p className="text-center py-8 text-xs sm:text-sm text-slate-500">
-                No districts match your search query &quot;{searchQuery}&quot;. Clear search to view all 75 districts.
-              </p>
-            )}
-          </div>
-
-          {/* Districts Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredDistricts.map((district) => (
-              <div
-                key={district.name}
-                className="group p-5 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+            {/* View Mode Toggle Buttons */}
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 self-start sm:self-auto">
+              <button
+                onClick={() => setViewMode('cards')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === 'cards'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-white'
+                }`}
               >
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <Link
-                        href={`/locations/${district.slug}`}
-                        className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors block"
+                Cards View
+              </button>
+              <button
+                onClick={() => setViewMode('divisions')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === 'divisions'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-white'
+                }`}
+              >
+                18 Divisions
+              </button>
+              <button
+                onClick={() => setViewMode('az')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === 'az'
+                    ? 'bg-amber-500 text-slate-950 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-white'
+                }`}
+              >
+                A-Z Index
+              </button>
+            </div>
+          </div>
+
+          {/* Search Bar & Zone Filter Tabs (Active in Cards View) */}
+          {viewMode === 'cards' && (
+            <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+                
+                {/* Search input */}
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Search by district name, Hindi name, division, or industry (e.g. Noida, Kanpur, Banaras, Peetal, Carpet)..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700/80 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+
+                {/* Zone Filter Buttons */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {ZONES.map((zone) => {
+                    const count = zone === 'All' ? UP_DISTRICTS.length : UP_DISTRICTS.filter((d) => d.zone === zone).length;
+                    const isActive = selectedZone === zone;
+                    return (
+                      <button
+                        key={zone}
+                        onClick={() => setSelectedZone(zone)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                          isActive
+                            ? 'bg-amber-500 text-slate-950 shadow-sm'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                        }`}
                       >
-                        {district.name}
-                      </Link>
-                      <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                        {district.hindiName}
+                        {zone} ({count})
+                      </button>
+                    );
+                  })}
+                </div>
+
+              </div>
+
+              {filteredDistricts.length === 0 && (
+                <p className="text-center py-8 text-xs sm:text-sm text-slate-500">
+                  No districts match your search query &quot;{searchQuery}&quot;. Clear search to view all 75 districts.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* VIEW 1: Cards Grid */}
+          {viewMode === 'cards' && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredDistricts.map((district) => (
+                <div
+                  key={district.slug}
+                  className="group p-5 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <Link
+                          href={`/locations/${district.slug}`}
+                          className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 transition-colors block"
+                        >
+                          {district.name}
+                        </Link>
+                        <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                          {district.hindiName}
+                        </span>
+                      </div>
+
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0 border border-slate-200 dark:border-slate-700">
+                        {district.zone.split('/')[0]}
                       </span>
                     </div>
 
-                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0 border border-slate-200 dark:border-slate-700">
-                      {district.zone.split('/')[0]}
-                    </span>
-                  </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-2.5 leading-relaxed">
+                      <strong className="text-slate-700 dark:text-slate-300">Industry:</strong> {district.prominentFor}
+                    </p>
 
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-2.5 leading-relaxed">
-                    <strong className="text-slate-700 dark:text-slate-300">Industry:</strong> {district.prominentFor}
-                  </p>
-
-                  <div className="mt-3">
-                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block mb-1.5">
-                      Available Solutions:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {district.popularServices.map((srv) => (
-                        <span
-                          key={srv}
-                          className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20"
-                        >
-                          {srv}
-                        </span>
-                      ))}
+                    <div className="mt-3">
+                      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 block mb-1.5">
+                        Available Solutions:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {district.popularServices.map((srv) => (
+                          <span
+                            key={srv}
+                            className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20"
+                          >
+                            {srv}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
-                    Division: {district.division}
-                  </span>
-                  
-                  <Link
-                    href={`/locations/${district.slug}`}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors"
-                  >
-                    <span>View Landing Page</span>
-                    <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                  <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                      Division: {district.division}
+                    </span>
+                    
+                    <Link
+                      href={`/locations/${district.slug}`}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 transition-colors"
+                    >
+                      <span>View Landing Page</span>
+                      <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  </div>
                 </div>
+              ))}
+            </div>
+          )}
+
+          {/* VIEW 2: 18 Administrative Divisions Grouping */}
+          {viewMode === 'divisions' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {divisionsMap.map(([divisionName, districtsInDiv]) => (
+                <div
+                  key={divisionName}
+                  className="p-5 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-sm space-y-3"
+                >
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+                    <div className="flex items-center gap-2">
+                      <FolderTree className="w-4 h-4 text-amber-500" />
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                        {divisionName} Division
+                      </h3>
+                    </div>
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">
+                      {districtsInDiv.length} Districts
+                    </span>
+                  </div>
+
+                  <ul className="space-y-1.5">
+                    {districtsInDiv.map((d) => (
+                      <li key={d.slug}>
+                        <Link
+                          href={`/locations/${d.slug}`}
+                          className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/60 text-xs transition-colors group"
+                        >
+                          <div>
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-amber-500">
+                              {d.name}
+                            </span>
+                            <span className="text-[10px] text-slate-400 block">
+                              {d.hindiName}
+                            </span>
+                          </div>
+                          <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 group-hover:text-amber-500 transition-transform" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* VIEW 3: A-Z Alphabetical Index */}
+          {viewMode === 'az' && (
+            <div className="p-6 rounded-3xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="flex items-center gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <Hash className="w-4 h-4 text-emerald-500" />
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Alphabetical Directory of All 75 Uttar Pradesh District Landing Pages
+                </h3>
               </div>
-            ))}
-          </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                {alphabeticalDistricts.map((d, index) => (
+                  <Link
+                    key={d.slug}
+                    href={`/locations/${d.slug}`}
+                    className="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/70 border border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all flex items-center justify-between text-xs group"
+                  >
+                    <span className="text-slate-700 dark:text-slate-300 group-hover:text-emerald-500 font-medium truncate">
+                      <span className="text-slate-400 text-[10px] mr-1.5">{index + 1}.</span>
+                      {d.name.split('(')[0].trim()}
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-slate-400 group-hover:translate-x-0.5 group-hover:text-emerald-500 shrink-0 transition-transform" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
         </section>
 
         {/* SECTION: Dedicated IT Services & Commercial Keywords */}
@@ -325,7 +452,7 @@ export default function SitemapPage() {
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-                Core IT Services & Commercial Keyword Portfolio
+                Core IT Services &amp; Commercial Keyword Portfolio
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                 Detailed landing pages, capabilities, and specialized search terms for our software, mobile, and digital marketing services.
@@ -418,7 +545,7 @@ export default function SitemapPage() {
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-                Main Company Portals & Case Studies
+                Main Company Portals &amp; Case Studies
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Discover agency information, client results, engineering journals, and open developer roles.
@@ -456,7 +583,7 @@ export default function SitemapPage() {
             </div>
             <div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-                Legal & Governance Documents
+                Legal &amp; Governance Documents
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Terms of engagement, client privacy policies, NDA adherence, and intellectual property assurances.
