@@ -4,6 +4,8 @@ import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { SERVICES_DATA } from '@/lib/data';
 import { UP_DISTRICTS, SERVICE_KEYWORDS } from '@/lib/upDistricts';
+import { BIHAR_DISTRICTS } from '@/lib/biharDistricts';
+import { INDIA_DISTRICTS } from '@/lib/indiaDistricts';
 import {
   FileText,
   Compass,
@@ -37,9 +39,21 @@ export default function SitemapPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedZone, setSelectedZone] = useState<string>('All');
   const [viewMode, setViewMode] = useState<'cards' | 'divisions' | 'az'>('cards');
+  const [selectedIndiaState, setSelectedIndiaState] = useState<string>('All');
+
+  const indiaStatesList = useMemo(() => {
+    const states = Array.from(new Set(INDIA_DISTRICTS.map((d) => d.state))).sort();
+    return ['All', ...states];
+  }, []);
+
+  const filteredIndiaDistricts = useMemo(() => {
+    if (selectedIndiaState === 'All') return INDIA_DISTRICTS;
+    return INDIA_DISTRICTS.filter((d) => d.state === selectedIndiaState);
+  }, [selectedIndiaState]);
 
   const mainPages = [
     { title: 'Home Page', href: '/', desc: 'Full agency overview, core stats, and featured engineering projects.' },
+    { title: 'Bihar State Hub (38 Districts)', href: '/bihar', desc: 'Custom website, mobile app, and SEO solutions across all 38 districts of Bihar.' },
     { title: 'About Us', href: '/about', desc: 'Our background, leadership team, engineering philosophy, and values.' },
     { title: 'All Services', href: '/services', desc: 'Comprehensive list of all IT, design, and performance services.' },
     { title: 'Portfolio & Case Studies', href: '/portfolio', desc: 'Real-world digital products, apps, and client transformations.' },
@@ -444,9 +458,139 @@ export default function SitemapPage() {
 
         </section>
 
+        {/* SECTION: Bihar State (All 38 Districts) Local Directory */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0 mt-0.5">
+                <MapPin className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  Bihar State Local District Directory (All 38 Districts)
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                  Every district across Patna, Tirhut, Magadh, Saran, Darbhanga, Kosi, Purnia, Bhagalpur and Munger divisions.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/bihar"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold text-xs shadow transition-transform hover:scale-105 shrink-0"
+            >
+              <span>Visit Bihar Master Hub</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {BIHAR_DISTRICTS.map((d) => (
+              <Link
+                key={d.slug}
+                href={`/locations/${d.slug}`}
+                className="p-3.5 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 hover:border-amber-500/50 shadow-sm transition-all group"
+              >
+                <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors block truncate">
+                  {d.name.split('(')[0].trim()}
+                </span>
+                <span className="text-[10px] text-slate-400 block mt-0.5">
+                  {d.hindiName}
+                </span>
+                <div className="mt-2 flex items-center gap-1 text-[10px] font-semibold text-emerald-500">
+                  <span>{d.division} Div.</span>
+                  <ArrowRight className="w-2.5 h-2.5 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* SECTION: Pan-India State Directories (9 States: Odisha, Punjab, Rajasthan, Sikkim, Tamil Nadu, Telangana, Tripura, Uttarakhand, West Bengal) */}
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0 mt-0.5">
+                <Globe2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+                  Pan-India State Directories ({INDIA_DISTRICTS.length} Key Commercial Hubs Across 26 States)
+                </h2>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                  Targeted websites, Android apps, and localized commercial SEO across all 26 Indian States including Maharashtra, Gujarat, Karnataka, Madhya Pradesh, Haryana, Kerala, Andhra Pradesh, Assam, Rajasthan, Punjab &amp; more.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/locations"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-bold text-xs shadow transition-all border border-slate-700 shrink-0"
+            >
+              <span>All Locations Directory</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {/* State Filter Tabs */}
+          <div className="flex flex-wrap items-center gap-1.5 p-3 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-sm">
+            {indiaStatesList.map((state) => {
+              const count = state === 'All' ? INDIA_DISTRICTS.length : INDIA_DISTRICTS.filter((d) => d.state === state).length;
+              const isActive = selectedIndiaState === state;
+              return (
+                <button
+                  key={state}
+                  onClick={() => setSelectedIndiaState(state)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}
+                >
+                  {state} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Districts Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5">
+            {filteredIndiaDistricts.map((d) => (
+              <Link
+                key={d.slug}
+                href={`/locations/${d.slug}`}
+                className="p-4 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 hover:border-indigo-500/50 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-1 mb-1">
+                    <span className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                      {d.name}
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0 border border-indigo-500/20">
+                      {d.state}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 block mb-2">
+                    {d.hindiName}
+                  </span>
+                  <p className="text-[11px] text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                    {d.prominentFor}
+                  </p>
+                </div>
+
+                <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[10px] font-semibold text-indigo-500">
+                  <span>Explore SEO &amp; Services</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* SECTION: Dedicated IT Services & Commercial Keywords */}
         <section className="space-y-6">
           <div className="flex items-start gap-3">
+
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center shrink-0 mt-0.5">
               <Layers className="w-5 h-5" />
             </div>

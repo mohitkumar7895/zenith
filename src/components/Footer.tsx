@@ -70,20 +70,22 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <div className="flex flex-wrap items-center gap-x-2">
-                  <a href="tel:+917895094129" className="hover:text-amber-400 transition-colors font-medium">
+                <div className="flex flex-wrap items-center gap-x-2 text-xs font-semibold text-slate-300">
+                  <a href="tel:+917895094129" className="hover:text-amber-400 transition-colors">
                     +91 7895094129
                   </a>
                   <span className="text-slate-600">/</span>
-                  <a href="tel:+919193648939" className="hover:text-amber-400 transition-colors font-medium">
+                  <a href="tel:+919193648939" className="hover:text-amber-400 transition-colors">
                     +91 9193648939
                   </a>
                 </div>
               </div>
+
               <div className="flex items-center gap-2">
+
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href="mailto:contact@zenithwebworks.io" className="hover:text-amber-400 transition-colors">
-                  contact@zenithwebworks.io
+                <a href="mailto:infozenithwebworks@gmail.com" className="hover:text-amber-400 transition-colors">
+                  infozenithwebworks@gmail.com
                 </a>
               </div>
               <div className="pt-1">
@@ -101,6 +103,7 @@ export default function Footer() {
 
         <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-slate-500 text-center sm:text-left">
           <p>© 2026 Zenith Web Works. All rights reserved. • We Build Ideas For A Better Web</p>
+
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
             <Link href="/sitemap" className="text-amber-400/90 hover:text-amber-300 font-semibold transition-colors">HTML Sitemap</Link>
             <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">Sitemap.xml</a>

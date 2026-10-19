@@ -31,18 +31,26 @@ export const metadata: Metadata = {
     'Cloudflare & Cloud Hosting Setup',
     'IT Solutions Worldwide',
     'Offshore Development India',
+    'Call 7895094129',
+    'Call 9193648939',
+    '7895094129',
+    '9193648939',
+    'Zenith Web Works Contact Number',
+    'Website Development Helpline 7895094129',
+    'Software Developer Bihar UP Phone Number',
   ],
   authors: [{ name: 'Zenith Web Works', url: siteUrl }],
   creator: 'Zenith Web Works',
   publisher: 'Zenith Web Works',
   formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
+    email: true,
+    address: true,
+    telephone: true,
   },
   alternates: {
     canonical: '/',
   },
+
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -100,7 +108,24 @@ const jsonLdSchema = {
       logo: `${siteUrl}/icon.png`,
       description:
         'Global custom website, Android application, and software engineering agency delivering high-performance digital products worldwide.',
-      email: 'contact@zenithwebworks.io',
+      email: 'infozenithwebworks@gmail.com',
+      telephone: '+917895094129',
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          telephone: '+917895094129',
+          contactType: 'customer service',
+          areaServed: 'IN',
+          availableLanguage: ['Hindi', 'English'],
+        },
+        {
+          '@type': 'ContactPoint',
+          telephone: '+919193648939',
+          contactType: 'technical support',
+          areaServed: 'IN',
+          availableLanguage: ['Hindi', 'English'],
+        },
+      ],
       sameAs: [],
     },
     {
@@ -110,9 +135,11 @@ const jsonLdSchema = {
       url: siteUrl,
       logo: `${siteUrl}/icon.png`,
       image: `${siteUrl}/icon.png`,
+      telephone: '+917895094129',
       description:
         'Full-cycle IT and software development agency specializing in custom web applications, Android apps, UI/UX design, cloud architecture, and SEO.',
       priceRange: '$$',
+
       currenciesAccepted: 'USD, EUR, GBP, AUD, CAD, INR',
       paymentAccepted: 'Wire Transfer, Credit Card, PayPal, UPI',
       areaServed: [

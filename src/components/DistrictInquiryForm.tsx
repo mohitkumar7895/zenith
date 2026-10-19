@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Send, CheckCircle2, AlertCircle, Loader2, Phone } from 'lucide-react';
+import { Send, CheckCircle2, AlertCircle, Loader2, Phone, MessageCircle } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 interface DistrictInquiryFormProps {
@@ -17,8 +17,8 @@ export default function DistrictInquiryForm({ districtName }: DistrictInquiryFor
     phoneNumber: '',
     companyName: '',
     serviceRequired: 'Custom Website Development',
-    budgetRange: '₹30,000 - ₹60,000',
-    projectDetails: `Inquiry for digital project / software solution in ${districtName}, Uttar Pradesh.`,
+    budgetRange: '₹10,000 - ₹25,000 (Dynamic / Store)',
+    projectDetails: `Inquiry for digital project / software solution in ${districtName}.`,
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -36,13 +36,14 @@ export default function DistrictInquiryForm({ districtName }: DistrictInquiryFor
   ];
 
   const budgetRanges = [
-    'Under ₹20,000',
-    '₹20,000 - ₹50,000',
-    '₹50,000 - ₹1,00,000',
-    '₹1,00,000 - ₹3,00,000',
-    '₹3,00,000+',
-    'Flexible',
+    '₹4,999 - ₹10,000 (Starter Website)',
+    '₹10,000 - ₹25,000 (Dynamic / Store)',
+    '₹25,000 - ₹60,000 (Custom Portal / App)',
+    '₹60,000 - ₹1,50,000 (Enterprise)',
+    '₹1,50,000+',
+    'Flexible / Discuss on Call',
   ];
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,23 +213,38 @@ export default function DistrictInquiryForm({ districtName }: DistrictInquiryFor
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-      >
-        {isSubmitting ? (
-          <>
-            <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Sending to Dispatcher...</span>
-          </>
-        ) : (
-          <>
-            <Send className="w-4 h-4" />
-            <span>Submit Inquiry for {districtName} →</span>
-          </>
-        )}
-      </button>
+      <div className="flex flex-col sm:flex-row items-center gap-3">
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="flex-1 w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Sending Details...</span>
+            </>
+          ) : (
+            <>
+              <Send className="w-4 h-4" />
+              <span>Submit Project Inquiry →</span>
+            </>
+          )}
+        </button>
+
+        <a
+          href={`https://wa.me/917895094129?text=${encodeURIComponent(
+            `Namaste Zenith team! Mera naam ${formData.fullName || '[Aapka Naam]'} hai. Mujhe ${districtName} ke liye ${formData.serviceRequired} (${formData.budgetRange}) ki jankari chahiye.`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 shrink-0"
+        >
+          <MessageCircle className="w-4 h-4" />
+          <span>Chat on WhatsApp</span>
+        </a>
+      </div>
+
 
       <p className="text-[11px] text-center text-slate-500 dark:text-slate-400">
         🔒 100% Confidential. NDA Protected. Direct response from senior architects within 2 hours.

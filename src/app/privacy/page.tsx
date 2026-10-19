@@ -143,8 +143,9 @@ export default function PrivacyPolicyPage() {
               </div>
               <div className="flex items-center gap-2 text-slate-800 dark:text-slate-200 font-medium">
                 <Mail className="w-4 h-4 text-blue-500 shrink-0" />
-                <span>Email: contact@zenithwebworks.io</span>
+                <span>Email: infozenithwebworks@gmail.com</span>
               </div>
+
             </div>
           </section>
         </div>

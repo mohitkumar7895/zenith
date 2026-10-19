@@ -125,11 +125,12 @@ export default function ContactPage() {
                 <div>
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">Direct Email</h3>
                   <a
-                    href="mailto:contact@zenithwebworks.io"
+                    href="mailto:infozenithwebworks@gmail.com"
                     className="text-sm font-semibold text-slate-800 dark:text-slate-200 hover:text-orange-500 transition-colors mt-0.5 block"
                   >
-                    contact@zenithwebworks.io
+                    infozenithwebworks@gmail.com
                   </a>
+
                   <p className="text-xs text-slate-500 dark:text-slate-400">
                     Typical response within 2 hours
                   </p>

@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { SERVICES_DATA } from '@/lib/data';
 import { UP_DISTRICTS } from '@/lib/upDistricts';
+import { BIHAR_DISTRICTS } from '@/lib/biharDistricts';
+import { INDIA_DISTRICTS } from '@/lib/indiaDistricts';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
@@ -63,10 +65,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.85,
     },
     {
+      url: `${baseUrl}/locations`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
       url: `${baseUrl}/privacy`,
       lastModified,
       changeFrequency: 'yearly',
       priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/bihar`,
+      lastModified,
+      changeFrequency: 'weekly',
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/terms`,
@@ -85,12 +99,35 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Dynamic District Landing Pages for all 75 Districts of Uttar Pradesh
-  const districtPages: MetadataRoute.Sitemap = UP_DISTRICTS.map((district) => ({
+  const upDistrictPages: MetadataRoute.Sitemap = UP_DISTRICTS.map((district) => ({
     url: `${baseUrl}/locations/${district.slug}`,
     lastModified,
     changeFrequency: 'weekly',
     priority: 0.8,
   }));
 
-  return [...staticPages, ...servicePages, ...districtPages];
+  // Dynamic District Landing Pages for all 38 Districts of Bihar
+  const biharDistrictPages: MetadataRoute.Sitemap = BIHAR_DISTRICTS.map((district) => ({
+    url: `${baseUrl}/locations/${district.slug}`,
+    lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  }));
+
+  // Dynamic District Landing Pages for all 76 Districts across 9 other Indian States
+  const indiaDistrictPages: MetadataRoute.Sitemap = INDIA_DISTRICTS.map((district) => ({
+    url: `${baseUrl}/locations/${district.slug}`,
+    lastModified,
+    changeFrequency: 'weekly',
+    priority: 0.85,
+  }));
+
+  return [
+    ...staticPages,
+    ...servicePages,
+    ...upDistrictPages,
+    ...biharDistrictPages,
+    ...indiaDistrictPages,
+  ];
 }
+
