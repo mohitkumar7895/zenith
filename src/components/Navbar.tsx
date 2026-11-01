@@ -323,7 +323,7 @@ export default function Navbar() {
             className="flex items-center gap-2 py-2 text-amber-500 font-bold"
           >
             <Globe className="w-4 h-4 text-amber-500" />
-            <span>🌍 Global / Offshore (US/UK/AU)</span>
+            <span>Global / Offshore</span>
           </Link>
           <Link
             href="/locations"

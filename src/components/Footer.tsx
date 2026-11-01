@@ -51,7 +51,7 @@ export default function Footer() {
             <div>
               <h3 className="text-xs uppercase font-bold tracking-wider text-white mb-2.5 sm:mb-4">Solutions &amp; Global</h3>
               <ul className="space-y-1.5 sm:space-y-2.5 text-xs text-slate-400">
-                <li><Link href="/global" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">🌍 Offshore Hub (US/UK/AU)</Link></li>
+                <li><Link href="/global" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">Global / Offshore</Link></li>
                 <li><Link href="/locations" className="hover:text-amber-400 transition-colors">🇮🇳 All India (319 Districts)</Link></li>
                 <li><Link href="/bihar" className="hover:text-amber-400 transition-colors">Bihar State Hub (38 Districts)</Link></li>
                 <li><Link href="/services/web-app-crm-development" className="hover:text-amber-400 transition-colors">Business CRMs</Link></li>
@@ -106,6 +106,7 @@ export default function Footer() {
           <p>© 2026 Zenith Web Works. All rights reserved. • We Build Ideas For A Better Web</p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6">
+            <Link href="/global" className="text-amber-400 font-bold hover:text-amber-300 transition-colors">Global / Offshore</Link>
             <Link href="/sitemap" className="text-amber-400/90 hover:text-amber-300 font-semibold transition-colors">HTML Sitemap</Link>
             <a href="/sitemap.xml" target="_blank" rel="noopener noreferrer" className="hover:text-amber-400 transition-colors">Sitemap.xml</a>
             <Link href="/privacy" className="hover:text-amber-400 transition-colors">Privacy Policy</Link>

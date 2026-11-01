@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle, Phone, MessageCircle, Sparkles } from 'lucide-react';
+import { ChevronDown, HelpCircle, Phone, MessageCircle } from 'lucide-react';
 
 export const HOME_FAQS = [
   {
@@ -17,16 +17,8 @@ export const HOME_FAQS = [
     a: 'Haan, bilkul! Hum har website me technical On-Page SEO, Google Search Console indexing, sitemap submission, Google Business Profile (Map) integration aur schema structured markup add karte hain taaki aapke shahar aur all-India ke customers aapko Google par search karke direct call karein.',
   },
   {
-    q: 'Kya mujhe website ka source code aur admin panel milega?',
-    a: 'Haan! Zenith Web Works aapko 100% intellectual property & source code ownership deta hai. Aapko simple mobile-friendly admin panel diya jata hai jisse aap bina kisi technical knowledge ke photos, phone numbers, prices aur services khud update kar sakte hain.',
-  },
-  {
     q: 'Kya hum directly phone par baat karke project discuss kar sakte hain?',
     a: 'Haan, aap hamare co-founders Dhani Ram Singh (+91 7895094129) aur Mohit Kumar (+91 9193648939) ko directly call ya WhatsApp kar sakte hain. Hum aapke business model ke anusaar free technical guidance aur best price roadmap provide karte hain.',
-  },
-  {
-    q: 'Payment kaise karni hoti hai (What is the payment process)?',
-    a: 'Hum transparent milestones par kaam karte hain. Kaam shuru karne ke liye chhota advance liya jata hai, live staging link par aapko website dikhayi jati hai, aur final live delivery & satisfaction ke baad baaki payment li jati hai. Payment UPI, Net Banking ya Credit Card se ki ja sakti hai.',
   },
 ];
 
@@ -70,7 +62,7 @@ export default function HomeFaqSection() {
           </p>
         </div>
 
-        {/* FAQs Accordion */}
+        {/* FAQs Accordion (Exactly 4 FAQs) */}
         <div className="space-y-3.5">
           {HOME_FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx;
@@ -82,14 +74,13 @@ export default function HomeFaqSection() {
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? null : idx)}
-                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:text-amber-500 dark:hover:text-amber-400 transition-colors"
+                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 font-bold text-sm sm:text-base text-slate-900 dark:text-white hover:text-amber-500 dark:hover:text-amber-400 transition-colors cursor-pointer"
                   aria-expanded={isOpen}
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    className={`w-5 h-5 text-amber-500 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180' : ''
-                    }`}
+                    className={`w-5 h-5 text-amber-500 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''
+                      }`}
                   />
                 </button>
 
@@ -132,4 +123,3 @@ export default function HomeFaqSection() {
     </section>
   );
 }
-
