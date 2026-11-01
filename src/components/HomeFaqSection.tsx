@@ -5,8 +5,8 @@ import { ChevronDown, HelpCircle, Phone, MessageCircle, Sparkles } from 'lucide-
 
 export const HOME_FAQS = [
   {
-    q: 'Website banwane ka kitna charge hota hai (What is the cost of website development)?',
-    a: 'Zenith Web Works me small business aur shop websites starting price sirf ₹4,999 hai jisme 5 responsive pages, free 1-year domain, high-speed cloud hosting, SSL security aur WhatsApp button shamil hai. E-Commerce online shopping store ₹12,999 se start hota hai aur custom web application / CRM ₹24,999+ se. Direct estimate ke liye call karein: +91 7895094129.',
+    q: 'Website banwane ka kya process aur charge hota hai (How are project estimates decided)?',
+    a: 'Zenith Web Works me har project business requirements ke according custom design hota hai — chahe standard business website ho, e-commerce store ho ya custom CRM software. Hum transparent milestones, free technical scoping aur 100% code ownership provide karte hain. Direct customized estimate ke liye call ya WhatsApp karein: +91 7895094129.',
   },
   {
     q: 'Website kitne din me bankar live ho jati hai (How fast is delivery)?',

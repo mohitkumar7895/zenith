@@ -34,7 +34,7 @@ export default function HeroSection() {
                 {/* Trust / Speed / Price Hook Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs sm:text-sm font-semibold mb-3 backdrop-blur-md">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                  <span>Websites from ₹4,999 • Ready in 3-7 Days • Call Now</span>
+                  <span>Custom Web &amp; Mobile Apps • Fast 3-7 Days Delivery • Call Founder</span>
                 </div>
 
                 {/* Main Headline */}
