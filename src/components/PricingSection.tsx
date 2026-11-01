@@ -1,16 +1,32 @@
 'use client';
 
-import React from 'react';
-import { Phone, CheckCircle2, Zap, ArrowRight, ShieldCheck, Sparkles, MessageCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { Phone, CheckCircle2, Zap, ArrowRight, ShieldCheck, Sparkles, MessageCircle, Globe2 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 
 const PHONE_1 = '+917895094129';
 const PHONE_1_DISPLAY = '+91 7895094129';
 
+export interface PricingPackage {
+  name: string;
+  badge: string;
+  price: string;
+  period: string;
+  delivery: string;
+  description: string;
+  highlight: boolean;
+  features: string[];
+  callNumber: string;
+  callDisplay: string;
+  tag: string;
+}
+
 export default function PricingSection() {
   const { openConsultationModal } = useApp();
+  const [currency, setCurrency] = useState<'INR' | 'USD'>('INR');
 
-  const packages = [
+  const packagesINR: PricingPackage[] = [
     {
       name: 'Starter Business Website',
       badge: 'Most Popular for Small Business',
@@ -80,6 +96,76 @@ export default function PricingSection() {
     },
   ];
 
+  const packagesUSD: PricingPackage[] = [
+    {
+      name: 'Starter Business Website',
+      badge: 'Most Popular for SMBs',
+      price: '$149',
+      period: 'one-time milestone',
+      delivery: '3 – 5 Days Delivery',
+      description: 'High-speed Next.js conversion website for international SMBs, consultants, and agencies.',
+      highlight: false,
+      features: [
+        '5 High-Converting Next.js Responsive Pages',
+        'Free 1-Year Global Cloud Hosting & SSL',
+        'Sub-second page load times with Cloudflare CDN',
+        'WhatsApp, Calendly & Contact Lead Integration',
+        '100% Intellectual Property & GitHub transfer',
+        'Comprehensive On-Page SEO & Schema Markup',
+        'Overlapping US/UK/AU timezone communications',
+        'Free 30 days post-launch technical warranty',
+      ],
+      callNumber: PHONE_1,
+      callDisplay: PHONE_1_DISPLAY,
+      tag: 'Starter',
+    },
+    {
+      name: 'Dedicated Remote Developer',
+      badge: 'Save 70% Over Local Hiring',
+      price: '$18 / hr',
+      period: 'or $2,400 / month (160 hrs)',
+      delivery: 'Immediate 48h Deployment',
+      description: 'Dedicated full-stack Next.js, React, Node.js or Flutter engineer working exclusively on your product.',
+      highlight: true,
+      features: [
+        'Full-time 40 hrs/week senior full-stack engineer',
+        '4 to 6 hours daily US/UK/AU timezone overlap',
+        'Daily video standups & real-time Slack/Teams sync',
+        'Direct commits to your GitHub / GitLab repo',
+        '1-Week Risk-Free Trial (Zero commitment)',
+        'Scale team up or down with 2 weeks notice',
+        'Strict Mutual NDA & 100% Code Ownership',
+      ],
+      callNumber: PHONE_1,
+      callDisplay: PHONE_1_DISPLAY,
+      tag: 'Dedicated Pod',
+    },
+    {
+      name: 'Custom Web App & CRM (MVP)',
+      badge: 'For Tech Startups & SaaS',
+      price: '$799+',
+      period: 'fixed-scope milestone',
+      delivery: '10 – 20 Days Delivery',
+      description: 'Custom SaaS platform, multi-tenant portal, or cross-platform Flutter/Android mobile app.',
+      highlight: false,
+      features: [
+        'Full-Stack Next.js 16 + React 19 + Node/MySQL',
+        'Stripe, PayPal or Multi-Currency Payment Gateway',
+        'Role-Based Access Control (RBAC) & Auth',
+        'High-concurrency database architecture',
+        'REST / GraphQL APIs & Webhook automations',
+        'Automated CI/CD deployment pipelines',
+        '100% Code Repository transfer under your name',
+        'Dedicated Project Lead & Sprint Demos',
+      ],
+      callNumber: PHONE_1,
+      callDisplay: PHONE_1_DISPLAY,
+      tag: 'Custom MVP',
+    },
+  ];
+
+  const currentPackages: PricingPackage[] = currency === 'INR' ? packagesINR : packagesUSD;
+
   return (
     <section id="pricing" className="py-12 sm:py-20 bg-slate-900/60 dark:bg-[#040918] relative overflow-hidden border-t border-slate-200/20 dark:border-slate-800">
       {/* Background glow */}
@@ -94,12 +180,41 @@ export default function PricingSection() {
           </div>
 
           <h2 className="text-2xl xs:text-3xl sm:text-5xl font-black text-white tracking-tight">
-            Affordable Website &amp; App Packages
+            Affordable Website, App &amp; Developer Packages
           </h2>
 
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto">
-            Choose the right plan for your business. Speak directly with our developers to get started today with zero risk.
+            Choose the right plan for your business. We serve clients across all Indian states and global corridors (USA, UK, Canada, Australia &amp; UAE).
           </p>
+
+          {/* Currency Toggle: INR vs USD */}
+          <div className="pt-2 flex items-center justify-center">
+            <div className="inline-flex items-center p-1 rounded-2xl bg-slate-800/90 border border-slate-700 shadow-inner">
+              <button
+                type="button"
+                onClick={() => setCurrency('INR')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  currency === 'INR'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                🇮🇳 Domestic (INR ₹)
+              </button>
+              <button
+                type="button"
+                onClick={() => setCurrency('USD')}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  currency === 'USD'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 shadow-md'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Globe2 className="w-3.5 h-3.5" />
+                <span>🌍 Global / USA / UK (USD $)</span>
+              </button>
+            </div>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs sm:text-sm text-slate-300 font-semibold pt-2">
             <span className="flex items-center gap-1.5 text-emerald-400">
@@ -116,7 +231,7 @@ export default function PricingSection() {
 
         {/* Pricing Cards Grid */}
         <div className="mt-10 sm:mt-16 grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-stretch">
-          {packages.map((pkg, idx) => (
+          {currentPackages.map((pkg, idx) => (
             <div
               key={idx}
               className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 ${
@@ -127,7 +242,7 @@ export default function PricingSection() {
             >
               {/* Highlight ribbon */}
               {pkg.highlight && (
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-1">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg flex items-center gap-1 whitespace-nowrap">
                   <Sparkles className="w-3 h-3" />
                   <span>{pkg.badge}</span>
                 </div>
@@ -190,7 +305,7 @@ export default function PricingSection() {
                 </a>
 
                 <a
-                  href={`https://wa.me/917895094129?text=Namaste%20Zenith%20team,%20mujhe%20${encodeURIComponent(pkg.name)}%20package%20(${encodeURIComponent(pkg.price)})%20ke%20bare%20me%20baat%20karni%20hai.`}
+                  href={`https://wa.me/917895094129?text=Hello%20Zenith%20team,%20I%20am%20interested%20in%20the%20${encodeURIComponent(pkg.name)}%20package%20(${encodeURIComponent(pkg.price)}).`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-2.5 px-4 rounded-xl font-semibold text-xs text-slate-200 bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 flex items-center justify-center gap-2 transition-all"
@@ -203,12 +318,24 @@ export default function PricingSection() {
           ))}
         </div>
 
+        {/* Global Offshore Callout Link */}
+        <div className="mt-8 text-center">
+          <Link
+            href="/global"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-amber-500 text-xs sm:text-sm font-bold text-amber-400 transition-all shadow-lg"
+          >
+            <Globe2 className="w-4 h-4" />
+            <span>International Client? Explore Our Dedicated Offshore Software Engineering Hub</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
         {/* Quick Founder Helpline Banner */}
         <div className="mt-12 sm:mt-16 rounded-2xl bg-gradient-to-r from-slate-900 via-[#0a1532] to-slate-900 border border-amber-500/30 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
           <div className="space-y-1 text-center md:text-left">
             <h4 className="text-lg sm:text-xl font-extrabold text-white flex items-center justify-center md:justify-start gap-2">
               <Phone className="w-5 h-5 text-amber-400" />
-              <span>Need a Custom Quote or Have Questions?</span>
+              <span>Need a Custom Scope or Have Questions?</span>
             </h4>
             <p className="text-xs sm:text-sm text-slate-300">
               Speak directly with our co-founders Dhani Ram Singh &amp; Mohit Kumar. Free 15-minute technical guidance.
@@ -236,4 +363,3 @@ export default function PricingSection() {
     </section>
   );
 }
-

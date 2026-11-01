@@ -29,7 +29,7 @@ export default function Footer() {
             </Link>
 
             <p className="text-slate-400 text-xs sm:text-sm max-w-sm leading-relaxed">
-              We deliver custom web applications, Android mobile apps, graphic design, paid ads and high-performance cloud hosting that power high-growth digital businesses.
+              We engineer custom web applications, Android mobile apps, custom CRMs, and high-performance cloud infrastructure for startups and businesses in the US, UK, Canada, Australia, UAE, and across India.
             </p>
           </div>
 
@@ -47,14 +47,15 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Solutions */}
+            {/* Solutions & Global Hub */}
             <div>
-              <h3 className="text-xs uppercase font-bold tracking-wider text-white mb-2.5 sm:mb-4">Solutions</h3>
+              <h3 className="text-xs uppercase font-bold tracking-wider text-white mb-2.5 sm:mb-4">Solutions &amp; Global</h3>
               <ul className="space-y-1.5 sm:space-y-2.5 text-xs text-slate-400">
+                <li><Link href="/global" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">🌍 Offshore Hub (US/UK/AU)</Link></li>
+                <li><Link href="/locations" className="hover:text-amber-400 transition-colors">🇮🇳 All India (319 Districts)</Link></li>
+                <li><Link href="/bihar" className="hover:text-amber-400 transition-colors">Bihar State Hub (38 Districts)</Link></li>
                 <li><Link href="/services/web-app-crm-development" className="hover:text-amber-400 transition-colors">Business CRMs</Link></li>
                 <li><Link href="/services/seo-performance-optimization" className="hover:text-amber-400 transition-colors">SEO & Speed</Link></li>
-                <li><Link href="/services/hosting-cloudflare-setup" className="hover:text-amber-400 transition-colors">Cloud & Hosting</Link></li>
-                <li><Link href="/services/website-maintenance-support" className="hover:text-amber-400 transition-colors">Maintenance Plans</Link></li>
                 <li><Link href="/services" className="hover:text-amber-400 font-semibold text-amber-500/90 transition-colors">View All Services →</Link></li>
               </ul>
             </div>

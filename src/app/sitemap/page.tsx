@@ -53,6 +53,7 @@ export default function SitemapPage() {
 
   const mainPages = [
     { title: 'Home Page', href: '/', desc: 'Full agency overview, core stats, and featured engineering projects.' },
+    { title: 'Global & Offshore Engineering (USA, UK, AU, UAE)', href: '/global', desc: 'Offshore software development, hire dedicated developers from $18/hr for US, UK, Canadian, Australian and UAE businesses.' },
     { title: 'Bihar State Hub (38 Districts)', href: '/bihar', desc: 'Custom website, mobile app, and SEO solutions across all 38 districts of Bihar.' },
     { title: 'About Us', href: '/about', desc: 'Our background, leadership team, engineering philosophy, and values.' },
     { title: 'All Services', href: '/services', desc: 'Comprehensive list of all IT, design, and performance services.' },
