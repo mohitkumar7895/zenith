@@ -51,25 +51,30 @@ export async function generateMetadata({
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
   const imageUrl = SERVICE_IMAGES[slug] || '/icon.png';
+  const pageTitle = `${service.title} Services | Call +91 7895094129 | Zenith Web Works`;
+  const pageDesc = `${service.shortDescription} Starting from ₹4,999. Fast 3-7 days delivery & 100% code ownership. Call or WhatsApp +91 7895094129 / +91 9193648939 for instant free quote!`;
 
   return {
-    title: `${service.title} Company & Services`,
-    description: service.shortDescription,
+    title: pageTitle,
+    description: pageDesc,
     keywords: [
       service.title,
       `Hire ${service.title} Experts`,
-      `${service.title} Agency`,
+      `${service.title} Agency India`,
+      `${service.title} Contact Number`,
+      'Call 7895094129',
+      'Call 9193648939',
       ...service.technologies,
-      'Outsource IT Services',
-      'Global Software Engineering',
+      'Outsource IT Services India',
+      'Best Software Engineering Agency',
       'Zenith Web Works',
     ],
     alternates: {
       canonical: `/services/${slug}`,
     },
     openGraph: {
-      title: `${service.title} | Zenith Web Works`,
-      description: service.shortDescription,
+      title: pageTitle,
+      description: pageDesc,
       url: `/services/${slug}`,
       images: [
         {
@@ -82,8 +87,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${service.title} | Zenith Web Works`,
-      description: service.shortDescription,
+      title: pageTitle,
+      description: pageDesc,
       images: [imageUrl],
     },
   };
@@ -112,16 +117,25 @@ export default async function ServiceDetailPage({
     serviceType: service.title,
     description: service.shortDescription,
     provider: {
-      '@type': 'Organization',
+      '@type': 'ProfessionalService',
       name: 'Zenith Web Works',
       url: siteUrl,
       logo: `${siteUrl}/icon.png`,
+      telephone: '+917895094129',
+      priceRange: '₹4,999 - ₹49,999',
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.9',
+        reviewCount: '148',
+        bestRating: '5',
+        worstRating: '1',
+      },
     },
     areaServed: 'Worldwide',
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: service.title,
-      itemListElement: service.features.map((feature, i) => ({
+      itemListElement: service.features.map((feature) => ({
         '@type': 'Offer',
         itemOffered: {
           '@type': 'Service',
@@ -131,12 +145,77 @@ export default async function ServiceDetailPage({
     },
   };
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: siteUrl,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Services',
+        item: `${siteUrl}/services`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: service.title,
+        item: `${siteUrl}/services/${slug}`,
+      },
+    ],
+  };
+
+  const serviceFaqs = [
+    {
+      q: `What is the cost of ${service.title} at Zenith Web Works?`,
+      a: `${service.title} packages start from ₹4,999 for foundational solutions to ₹14,999 – ₹35,000+ for enterprise requirements. Every project includes 100% source code ownership, free 1-year hosting/domain setup, and direct founder phone support (+91 7895094129).`,
+    },
+    {
+      q: `How long does it take to deliver ${service.title}?`,
+      a: `Standard projects are completed and deployed within 3 to 7 working days. Custom enterprise scopes take 10 to 20 days with milestone demo links provided at each stage.`,
+    },
+    {
+      q: `How can I discuss my project requirements right now?`,
+      a: `You can directly call our co-founders at +91 7895094129 or +91 9193648939, or message us on WhatsApp for an instant technical consultation and free quotation.`,
+    },
+  ];
+
+  const serviceFaqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: serviceFaqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.a,
+      },
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#060d1f] text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema).replace(/</g, '\\u003c'),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(serviceFaqSchema).replace(/</g, '\\u003c'),
         }}
       />
 
@@ -202,20 +281,27 @@ export default async function ServiceDetailPage({
               </div>
 
               {/* CTA Group */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
-                <ServiceInquiryButton
-                  serviceTitle={service.title}
-                  label={`Hire Us for ${service.title}`}
-                />
+              <div className="pt-2 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
+                <a
+                  href="tel:+917895094129"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm shadow-lg shadow-emerald-600/30 transition-all"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span>Call Now: +91 7895094129</span>
+                </a>
                 <a
                   href="https://wa.me/917895094129?text=Hello%20Zenith%20Team,%20I%20am%20interested%20in%20your%20services"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold text-sm transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-sm shadow-md transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
-                  <span>Instant WhatsApp Chat</span>
+                  <span>WhatsApp Chat</span>
                 </a>
+                <ServiceInquiryButton
+                  serviceTitle={service.title}
+                  label="Online Proposal"
+                />
               </div>
             </div>
 
@@ -354,29 +440,64 @@ export default async function ServiceDetailPage({
         </div>
       </section>
 
+      {/* Service FAQs Section */}
+      <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-200 dark:border-slate-800">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <div className="text-center space-y-2 mb-6">
+            <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              {service.title} FAQs
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Common questions answered. Call +91 7895094129 for personalized technical advice.
+            </p>
+          </div>
+          <div className="space-y-3">
+            {serviceFaqs.map((faq, i) => (
+              <div key={i} className="p-4 rounded-2xl bg-white dark:bg-[#0b152d] border border-slate-200 dark:border-slate-800 shadow-sm space-y-1.5">
+                <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+                  {faq.q}
+                </h4>
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Bottom Conversion Banner */}
       <section className="pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-3xl p-8 sm:p-12 overflow-hidden bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-slate-950 shadow-xl">
-          <div className="relative z-10 max-w-2xl space-y-4">
+          <div className="relative z-10 max-w-3xl space-y-4">
             <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
               Ready to Kickstart Your {service.title} Project?
             </h3>
             <p className="text-sm sm:text-base font-medium opacity-90">
-              Share your project vision with our technical team today and receive a detailed roadmap and estimate within 24 hours.
+              Speak directly with our technical founders. Free architecture scoping, live project demos, and transparent milestone quote.
             </p>
-            <div className="pt-2 flex flex-wrap items-center gap-4">
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <a
+                href="tel:+917895094129"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-950 text-white font-extrabold hover:bg-slate-900 transition-all text-sm shadow-xl"
+              >
+                <Phone className="w-4 h-4 text-amber-400" />
+                <span>Call Founder: +91 7895094129</span>
+              </a>
+              <a
+                href="https://wa.me/917895094129?text=Namaste%20Zenith%20team,%20mujhe%20is%20service%20ke%20bare%20me%20baat%20karni%20hai."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#25D366] text-white font-bold hover:bg-[#20ba59] transition-all text-sm shadow-xl"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>WhatsApp Now</span>
+              </a>
               <ServiceInquiryButton
                 serviceTitle={service.title}
-                label="Request Free Proposal & Quote"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-xl bg-slate-950 text-white font-bold hover:bg-slate-900 transition-all text-sm cursor-pointer"
+                label="Request Proposal"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-white/20 text-slate-950 font-bold hover:bg-white/30 transition-all text-sm border border-slate-950/20 cursor-pointer"
               />
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 text-sm font-bold text-slate-950 underline underline-offset-4 hover:opacity-80"
-              >
-                <span>Or reach us directly</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
             </div>
           </div>
         </div>

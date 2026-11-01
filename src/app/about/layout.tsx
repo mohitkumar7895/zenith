@@ -1,24 +1,26 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'About Zenith Web Works | Our Story, Team & Engineering Values',
+  title: 'About Us | Software & Web Agency | Call +91 7895094129 | Zenith Web Works',
   description:
-    'Meet the engineering minds behind Zenith Web Works. Delivering 320+ successful web and mobile solutions with 99/100 performance scores and 98.5% client retention.',
+    'Meet the engineering team behind Zenith Web Works. Over 320+ successful websites, Android apps, and software systems delivered. Speak with founders directly on +91 7895094129.',
   keywords: [
     'About Zenith Web Works',
-    'IT Software Agency',
+    'Call 7895094129',
+    'Call 9193648939',
+    'IT Software Agency India',
     'Full Stack Engineering Team',
-    'Next.js Specialists',
-    'Custom Software Developers',
+    'Next.js Specialists India',
+    'Custom Software Developers UP',
     'Web Architecture Company',
   ],
   alternates: {
     canonical: '/about',
   },
   openGraph: {
-    title: 'About Us | Zenith Web Works',
+    title: 'About Zenith Web Works | Founder Helpline +91 7895094129',
     description:
-      'Discover our leadership, engineering values, and track record delivering high-converting digital products for worldwide clients.',
+      'Discover our leadership, engineering values, and track record delivering high-converting digital products for businesses across India.',
     url: '/about',
   },
 };

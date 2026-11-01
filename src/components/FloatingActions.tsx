@@ -62,23 +62,23 @@ export default function FloatingActions() {
   return (
     <>
       {/* 1. Mobile Fixed Bottom Quick-Call & WhatsApp Strip (Visible on all mobile screens) */}
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-2.5 py-2 flex items-center justify-between gap-1.5 shadow-2xl">
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800 px-2 py-2 flex items-center justify-between gap-1.5 shadow-2xl">
         <a
           href={`tel:${PHONE_1}`}
           aria-label="Call Dhani Ram: 7895094129"
-          className="flex-1 py-2 px-1 rounded-xl bg-emerald-600 active:bg-emerald-700 text-white font-bold text-[11px] flex items-center justify-center gap-1 shadow-md"
+          className="flex-1 py-2 px-1 rounded-xl bg-emerald-600 active:bg-emerald-700 text-white font-extrabold text-[11px] flex items-center justify-center gap-1 shadow-md"
         >
-          <Phone className="w-3.5 h-3.5 shrink-0" />
-          <span>7895094129</span>
+          <Phone className="w-3.5 h-3.5 shrink-0 animate-bounce" />
+          <span>Call: 7895094129</span>
         </a>
 
         <a
           href={`tel:${PHONE_2}`}
           aria-label="Call Mohit: 9193648939"
-          className="flex-1 py-2 px-1 rounded-xl bg-blue-600 active:bg-blue-700 text-white font-bold text-[11px] flex items-center justify-center gap-1 shadow-md"
+          className="flex-1 py-2 px-1 rounded-xl bg-blue-600 active:bg-blue-700 text-white font-extrabold text-[11px] flex items-center justify-center gap-1 shadow-md"
         >
           <Phone className="w-3.5 h-3.5 shrink-0" />
-          <span>9193648939</span>
+          <span>Call: 9193648939</span>
         </a>
 
         <a
@@ -86,7 +86,7 @@ export default function FloatingActions() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat on WhatsApp"
-          className="py-2 px-3 rounded-xl bg-[#25D366] active:bg-[#20ba59] text-white font-bold text-[11px] flex items-center justify-center gap-1 shadow-md shrink-0"
+          className="py-2 px-2.5 rounded-xl bg-[#25D366] active:bg-[#20ba59] text-white font-extrabold text-[11px] flex items-center justify-center gap-1 shadow-md shrink-0"
         >
           <svg className="w-3.5 h-3.5 fill-current shrink-0" viewBox="0 0 24 24">
             <path d="M12 2C6.477 2 2 6.477 2 12c0 1.954.561 3.777 1.534 5.323L2 22l4.821-1.507A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.2c-1.68 0-3.242-.486-4.564-1.326l-.328-.207-2.868.897.915-2.793-.227-.344A8.17 8.17 0 013.8 12c0-4.522 3.678-8.2 8.2-8.2 4.522 0 8.2 3.678 8.2 8.2 0 4.522-3.678 8.2-8.2 8.2z" />

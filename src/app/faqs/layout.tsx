@@ -1,11 +1,15 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Frequently Asked Questions | Pricing, Timeline & IT Services',
+  title: 'Website & App Development FAQs | Call +91 7895094129 | Zenith Web Works',
   description:
-    'Got questions? Read FAQs about our custom web and Android app development, tech stack, pricing, timelines, hosting, code ownership, and international client workflows.',
+    'Find answers on website prices starting ₹4,999, 3-7 day delivery, 100% code ownership, and Android apps. Speak with founders directly on +91 7895094129 / +91 9193648939.',
   keywords: [
     'Web Development FAQs',
+    'Website Banwane Ka Kharcha',
+    'Website Development Price India',
+    'Call 7895094129',
+    'Call 9193648939',
     'IT Services Questions',
     'Mobile App Timeline',
     'Code Ownership',
@@ -16,9 +20,9 @@ export const metadata: Metadata = {
     canonical: '/faqs',
   },
   openGraph: {
-    title: 'FAQs | Zenith Web Works',
+    title: 'FAQs | Call +91 7895094129 | Zenith Web Works',
     description:
-      'Clear answers on custom software development timelines, code ownership, maintenance, and how to hire us.',
+      'Clear answers on custom website development, pricing from ₹4,999, timelines, code ownership, and direct phone consultation.',
     url: '/faqs',
   },
 };
@@ -29,26 +33,26 @@ const faqSchema = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'What technologies do you use for web and app development?',
+      name: 'What is the cost of website development at Zenith Web Works?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'We specialize in modern tech stacks: Next.js 16, React 19, TypeScript, Tailwind CSS, Node.js, and PHP / Laravel for backend engineering. For mobile apps, we develop in Android Native (Kotlin) and Flutter.',
+        text: 'Small business websites start at just ₹4,999 with 5 responsive pages, free domain, high-speed hosting, and SSL certificate. E-commerce online shopping portals start at ₹12,999 and custom web applications / CRMs from ₹24,999. Call +91 7895094129 for an exact quote.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How long does it take to build a custom website or mobile app?',
+      name: 'How long does it take to build and deploy a website or app?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'A standard custom website takes 1 to 2 weeks. Comprehensive e-commerce portals, custom web applications (CRMs), or Android mobile apps usually take 3 to 6 weeks depending on feature complexity.',
+        text: 'Standard business websites take 3 to 5 working days. Comprehensive e-commerce portals take 5 to 7 days, and custom Android mobile apps take 10 to 20 days. Clients receive staging preview links at each stage.',
       },
     },
     {
       '@type': 'Question',
-      name: 'Will my website be mobile-responsive and fast?',
+      name: 'How do we get started or talk to your team directly?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: '100% yes. Every single website we engineer is mobile-first, responsive across all screen sizes, and optimized to load in under 2 seconds with Cloudflare CDN edge caching.',
+        text: 'You can directly call or WhatsApp our co-founders Dhani Ram Singh at +91 7895094129 or Mohit Kumar at +91 9193648939. We explain the complete roadmap and share live demo links with zero obligation.',
       },
     },
     {
@@ -56,15 +60,15 @@ const faqSchema = {
       name: 'Do I get complete ownership of the code and website assets?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Yes. Once the project is delivered and finalized, you receive 100% intellectual property ownership of your codebase, database, design files, and server credentials.',
+        text: 'Yes! You receive 100% intellectual property ownership of your codebase, database, domain credentials, and design assets upon project delivery.',
       },
     },
     {
       '@type': 'Question',
-      name: 'How do we get started with Zenith Web Works?',
+      name: 'Will our website rank on Google Search (SEO)?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'Submit an inquiry on our website. Our architecture lead will schedule a call to understand your requirements, provide a free system scope, and share a transparent milestone proposal.',
+        text: 'Yes, every website comes with On-Page SEO, Google Search Console indexing, local Schema markup, and Google Business Profile optimization to help local customers find and call you.',
       },
     },
   ],

@@ -12,32 +12,35 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zenithwebworks.in';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Zenith Web Works | Custom Web & Mobile App Development Company',
+    default: 'Zenith Web Works | Best Website & App Development Company | Call +91 7895094129',
     template: '%s | Zenith Web Works',
   },
   description:
-    'Award-winning IT & software engineering agency. We build custom websites, Android apps, custom CRMs, UI/UX designs, and cloud infrastructure for businesses in the US, UK, Canada, Australia, India, and worldwide.',
+    'Top custom website & Android mobile app development company. Websites starting at ₹4,999 with 3-7 day delivery & 100% source code ownership. Call or WhatsApp +91 7895094129 / +91 9193648939 for instant free quotation!',
   keywords: [
     'Zenith Web Works',
-    'Custom Website Development',
+    'Website Development Company in India',
+    'Best Website Development Company',
+    'Website Banwane Ke Liye Sampark Karein',
+    'Website Banane Wale Ka Number',
     'Android App Development Company',
     'Hire Dedicated Web Developers',
-    'Outsource Software Development',
+    'Outsource Software Development India',
     'Next.js Development Agency',
     'React Full-Stack Developers',
     'Custom Web App & CRM Solutions',
+    'Low Cost Website Development India',
+    'Ecommerce Website Design Company',
     'UI UX Graphic Design Agency',
     'SEO & Technical Performance Optimization',
     'Cloudflare & Cloud Hosting Setup',
-    'IT Solutions Worldwide',
-    'Offshore Development India',
     'Call 7895094129',
     'Call 9193648939',
     '7895094129',
     '9193648939',
     'Zenith Web Works Contact Number',
     'Website Development Helpline 7895094129',
-    'Software Developer Bihar UP Phone Number',
+    'Software Developer UP Bihar Delhi Phone Number',
   ],
   authors: [{ name: 'Zenith Web Works', url: siteUrl }],
   creator: 'Zenith Web Works',
@@ -53,12 +56,12 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: 'website',
-    locale: 'en_US',
+    locale: 'en_IN',
     url: siteUrl,
     siteName: 'Zenith Web Works',
-    title: 'Zenith Web Works | Custom Web & Mobile App Development Company',
+    title: 'Zenith Web Works | Best Website & App Development Company | Call +91 7895094129',
     description:
-      'We engineer fast, scalable, conversion-ready websites, Android applications, and bespoke software systems for businesses worldwide.',
+      'High-speed custom websites, Android applications, and software systems starting at ₹4,999. Fast 3-7 days delivery. Call +91 7895094129 for instant quotation.',
     images: [
       {
         url: '/icon.png',
@@ -70,9 +73,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Zenith Web Works | Custom Web & Mobile App Development Company',
+    title: 'Zenith Web Works | Best Website & App Development Company | Call +91 7895094129',
     description:
-      'High-performance websites, Android apps, and custom software delivered for global startups and growing businesses.',
+      'High-speed websites & Android apps starting at ₹4,999. Fast 3-7 days delivery. Call +91 7895094129.',
     images: ['/icon.png'],
   },
   robots: {
@@ -101,13 +104,23 @@ const jsonLdSchema = {
   '@context': 'https://schema.org',
   '@graph': [
     {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
+      url: siteUrl,
+      name: 'Zenith Web Works',
+      description: 'Best Custom Website & Mobile App Development Company in India',
+      publisher: {
+        '@id': `${siteUrl}/#organization`,
+      },
+    },
+    {
       '@type': 'Organization',
       '@id': `${siteUrl}/#organization`,
       name: 'Zenith Web Works',
       url: siteUrl,
       logo: `${siteUrl}/icon.png`,
       description:
-        'Global custom website, Android application, and software engineering agency delivering high-performance digital products worldwide.',
+        'Award-winning IT and software engineering agency delivering custom websites, Android apps, custom CRMs, UI/UX design, and cloud hosting worldwide.',
       email: 'infozenithwebworks@gmail.com',
       telephone: '+917895094129',
       contactPoint: [
@@ -137,18 +150,47 @@ const jsonLdSchema = {
       image: `${siteUrl}/icon.png`,
       telephone: '+917895094129',
       description:
-        'Full-cycle IT and software development agency specializing in custom web applications, Android apps, UI/UX design, cloud architecture, and SEO.',
-      priceRange: '$$',
-
-      currenciesAccepted: 'USD, EUR, GBP, AUD, CAD, INR',
-      paymentAccepted: 'Wire Transfer, Credit Card, PayPal, UPI',
+        'Custom web development, mobile app development, CRM solutions, and digital marketing company starting from ₹4,999. Fast 3-7 day delivery with 100% source code ownership.',
+      priceRange: '₹4,999 - ₹49,999',
+      currenciesAccepted: 'INR, USD, EUR, GBP',
+      paymentAccepted: 'UPI, Net Banking, Credit Card, Wire Transfer',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Bidhuna Road, Bharthana',
+        addressLocality: 'Etawah',
+        addressRegion: 'Uttar Pradesh',
+        postalCode: '206242',
+        addressCountry: 'IN',
+      },
+      geo: {
+        '@type': 'GeoCoordinates',
+        latitude: 26.7533,
+        longitude: 79.2312,
+      },
+      openingHoursSpecification: [
+        {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+          opens: '08:00',
+          closes: '22:00',
+        },
+      ],
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: '4.9',
+        reviewCount: '148',
+        bestRating: '5',
+        worstRating: '1',
+      },
       areaServed: [
-        { '@type': 'Place', name: 'Worldwide' },
+        { '@type': 'Country', name: 'India' },
+        { '@type': 'AdministrativeArea', name: 'Uttar Pradesh' },
+        { '@type': 'AdministrativeArea', name: 'Bihar' },
+        { '@type': 'AdministrativeArea', name: 'Delhi NCR' },
         { '@type': 'Country', name: 'United States' },
         { '@type': 'Country', name: 'United Kingdom' },
         { '@type': 'Country', name: 'Canada' },
         { '@type': 'Country', name: 'Australia' },
-        { '@type': 'Country', name: 'India' },
       ],
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
@@ -160,7 +202,7 @@ const jsonLdSchema = {
               '@type': 'Service',
               name: 'Custom Website Development',
               description:
-                'Custom-coded, high-converting websites and web applications built with Next.js, React, and modern full-stack architectures.',
+                'High-converting, responsive business websites built with Next.js & React starting at ₹4,999.',
             },
           },
           {
@@ -169,7 +211,16 @@ const jsonLdSchema = {
               '@type': 'Service',
               name: 'Android Mobile App Development',
               description:
-                'Native and Flutter Android applications for businesses, startups, and enterprises with Google Play Store deployment.',
+                'Native Kotlin & Flutter Android apps for business and startups with Play Store deployment.',
+            },
+          },
+          {
+            '@type': 'Offer',
+            itemOffered: {
+              '@type': 'Service',
+              name: 'E-Commerce Website Development',
+              description:
+                'Full online store with payment gateway, cart, order tracking, and admin dashboard.',
             },
           },
           {
@@ -187,7 +238,7 @@ const jsonLdSchema = {
               '@type': 'Service',
               name: 'SEO & Performance Optimization',
               description:
-                'Technical search engine optimization, Core Web Vitals optimization, and long-term organic ranking growth.',
+                'Local SEO, Google ranking optimization, Core Web Vitals, and lead generation.',
             },
           },
         ],

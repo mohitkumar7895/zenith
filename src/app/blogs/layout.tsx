@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Tech & Engineering Blog | Insights on Next.js, Apps & Growth',
+  title: 'Tech & Web Engineering Blog | Call +91 7895094129 | Zenith Web Works',
   description:
-    'Read the latest guides and industry perspectives from Zenith Web Works: modern web architecture, Android app development, SEO tactics, and digital scaling.',
+    'Read actionable guides on modern web architecture, Android app engineering, Local SEO tactics, and Google ranking from Zenith Web Works. Direct helpline: +91 7895094129.',
   keywords: [
-    'Tech Blog',
+    'Tech Blog India',
     'Next.js Tutorials',
     'Software Architecture Insights',
     'Mobile App Guides',
-    'SEO Strategies',
+    'Local SEO Strategies',
+    'Call 7895094129',
     'Zenith Web Works Blog',
   ],
   alternates: {
