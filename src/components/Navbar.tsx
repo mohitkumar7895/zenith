@@ -23,7 +23,6 @@ import {
   MapPin,
   Phone,
   MessageCircle,
-  Globe,
 } from 'lucide-react';
 
 
@@ -137,15 +136,6 @@ export default function Navbar() {
             >
               <Briefcase className="w-4 h-4 text-amber-500" />
               <span>Portfolio</span>
-            </Link>
-
-            {/* Global / Offshore Link */}
-            <Link
-              href="/global"
-              className="hover:text-amber-400 transition-colors flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 font-bold text-xs"
-            >
-              <Globe className="w-3.5 h-3.5 text-amber-500" />
-              <span>Global / Offshore</span>
             </Link>
 
             {/* All India Locations Directory */}
@@ -316,14 +306,6 @@ export default function Navbar() {
           >
             <Briefcase className="w-4 h-4 text-amber-500" />
             <span>Portfolio</span>
-          </Link>
-          <Link
-            href="/global"
-            onClick={() => setMobileMenuOpen(false)}
-            className="flex items-center gap-2 py-2 text-amber-500 font-bold"
-          >
-            <Globe className="w-4 h-4 text-amber-500" />
-            <span>Global / Offshore</span>
           </Link>
           <Link
             href="/locations"
